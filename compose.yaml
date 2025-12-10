@@ -1,0 +1,13 @@
+name: hspl2shop
+
+services:
+  mysql:
+    image: 'mysql:latest'
+    restart: on-failure
+    environment:
+      - 'MYSQL_DATABASE=hspl2shop'
+      - 'MYSQL_PASSWORD=123'
+      - 'MYSQL_ROOT_PASSWORD=123'
+      - 'MYSQL_USER=hspl'
+    ports:
+      - '3306:3306'
