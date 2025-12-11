@@ -1,4 +1,4 @@
-package dev.hspl.hspl2shop.shop.model.query;
+package dev.hspl.hspl2shop.shop.model.query.dto;
 
 import dev.hspl.hspl2shop.shop.value.HumanReadableId;
 import dev.hspl.hspl2shop.shop.value.ImageReference;
@@ -10,7 +10,8 @@ import org.jspecify.annotations.NullMarked;
 public record ConciseProduct(
         HumanReadableId id,
         ProductName name,
+        ImageReference primaryImage,
         ShortDescription shortDescription,
-        ImageReference primaryImage
+        boolean discountFlag
 ) {
 }

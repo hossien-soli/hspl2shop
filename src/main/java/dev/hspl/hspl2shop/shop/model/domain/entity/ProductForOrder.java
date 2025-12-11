@@ -1,12 +1,9 @@
-package dev.hspl.hspl2shop.shop.model.domain;
+package dev.hspl.hspl2shop.shop.model.domain.entity;
 
-import dev.hspl.hspl2shop.shop.value.CategoryInfo;
 import dev.hspl.hspl2shop.shop.value.HumanReadableId;
 import dev.hspl.hspl2shop.shop.value.ProductName;
 import lombok.Getter;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 // domain required product info for creating and handling orders
 

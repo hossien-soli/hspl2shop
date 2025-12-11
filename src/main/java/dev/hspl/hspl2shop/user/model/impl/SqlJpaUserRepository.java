@@ -34,6 +34,11 @@ public class SqlJpaUserRepository implements UserRepository {
     }
 
     @Override
+    public boolean existsByPhoneNumber(PhoneNumber phoneNumber) {
+        return ...;
+    }
+
+    @Override
     public void save(User user) throws EntityVersionMismatchException {
         try {
             jpaRepository.save(UserJpaEntity.builder()

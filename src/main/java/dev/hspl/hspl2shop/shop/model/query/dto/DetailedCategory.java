@@ -1,4 +1,4 @@
-package dev.hspl.hspl2shop.shop.model.query;
+package dev.hspl.hspl2shop.shop.model.query.dto;
 
 import dev.hspl.hspl2shop.shop.value.HumanReadableId;
 import dev.hspl.hspl2shop.shop.value.ImageReference;

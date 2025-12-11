@@ -1,13 +1,12 @@
 name: hspl2shop
 
 services:
-  mysql:
-    image: 'mysql:latest'
+  postgres:
+    image: 'postgres:latest'
     restart: on-failure
     environment:
-      - 'MYSQL_DATABASE=hspl2shop'
-      - 'MYSQL_PASSWORD=123'
-      - 'MYSQL_ROOT_PASSWORD=123'
-      - 'MYSQL_USER=hspl'
+      - 'POSTGRES_DB=hspl2shop'
+      - 'POSTGRES_PASSWORD=123'
+      - 'POSTGRES_USER=hspl'
     ports:
-      - '3306:3306'
+      - '5432:5432'

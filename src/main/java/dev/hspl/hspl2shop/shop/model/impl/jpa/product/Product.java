@@ -1,13 +1,11 @@
-package dev.hspl.hspl2shop.shop.model.impl.jpa;
+package dev.hspl.hspl2shop.shop.model.impl.jpa.product;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity(name = "Product")
 @Table(name = "products")
@@ -33,6 +31,9 @@ public class Product {
 
     @Column(name = "desc")
     private String shortDescription;
+
+    @Column(name = "discount")
+    private boolean discountFlag;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @OrderBy("sortingValue DESC")
