@@ -2,10 +2,10 @@ package dev.hspl.hspl2shop.user.model.impl;
 
 import dev.hspl.hspl2shop.common.exception.EntityVersionMismatchException;
 import dev.hspl.hspl2shop.common.value.PhoneNumber;
-import dev.hspl.hspl2shop.user.model.domain.VerificationSession;
-import dev.hspl.hspl2shop.user.model.domain.VerificationSessionRepository;
-import dev.hspl.hspl2shop.user.model.impl.jpa.VerificationSessionJpaEntity;
-import dev.hspl.hspl2shop.user.model.impl.jpa.VerificationSessionJpaRepository;
+import dev.hspl.hspl2shop.user.model.write.entity.VerificationSession;
+import dev.hspl.hspl2shop.user.model.write.repository.VerificationSessionRepository;
+import dev.hspl.hspl2shop.user.model.impl.jpa.entity.VerificationSessionJpaEntity;
+import dev.hspl.hspl2shop.user.model.impl.jpa.repository.VerificationSessionJpaRepository;
 import dev.hspl.hspl2shop.user.value.ProtectedVerificationCode;
 import dev.hspl.hspl2shop.user.value.RequestClientIdentifier;
 import jakarta.persistence.OptimisticLockException;
