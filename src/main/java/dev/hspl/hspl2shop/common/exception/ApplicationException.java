@@ -1,5 +1,7 @@
 package dev.hspl.hspl2shop.common.exception;
 
+// TODO: add user to log context
+
 public abstract class ApplicationException extends RuntimeException {
     public ApplicationException(String message) {
         super(message);

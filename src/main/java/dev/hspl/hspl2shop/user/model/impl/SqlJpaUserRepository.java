@@ -54,7 +54,7 @@ public class SqlJpaUserRepository implements UserRepository {
                     .version(user.getVersion())
                     .build());
         } catch (OptimisticLockException exception) {
-            throw new EntityVersionMismatchException("User", user.getId().toString());
+            throw new EntityVersionMismatchException(User.class.getSimpleName(), user.getId().toString());
         }
     }
 }

@@ -1,11 +1,11 @@
 package dev.hspl.hspl2shop.user.web;
 
-import dev.hspl.hspl2shop.user.model.read.dto.ProvinceCityDto;
 import dev.hspl.hspl2shop.user.model.read.dto.CityDto;
+import dev.hspl.hspl2shop.user.model.read.dto.ProvinceCityDto;
 import dev.hspl.hspl2shop.user.model.read.dto.ProvinceDto;
+import dev.hspl.hspl2shop.user.service.dto.AddressInfoDto;
 import dev.hspl.hspl2shop.user.service.read.AddressQueryService;
 import dev.hspl.hspl2shop.user.service.write.AddressManagementService;
-import dev.hspl.hspl2shop.user.web.request.AddressRegistrationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -41,8 +41,8 @@ public class AddressController {
     @ResponseStatus(HttpStatus.CREATED)
     public void registerNewAddress(
             Authentication authentication,
-            @RequestBody AddressRegistrationRequest payload
+            @RequestBody AddressInfoDto payload
     ) {
-        // set max address registration limitation
+
     }
 }

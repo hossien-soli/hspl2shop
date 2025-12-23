@@ -7,6 +7,8 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
+// TODO: create a in memory cached version of this!!
+
 @NullMarked
 public interface ProvinceCityQueryRepository {
     List<ProvinceCityDto> queryAll();

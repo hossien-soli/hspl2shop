@@ -5,26 +5,23 @@ import org.jspecify.annotations.NullMarked;
 
 @Getter
 @NullMarked
-public class EntityVersionMismatchException extends ApplicationException {
+public class ClientSideEntityVersionMismatchException extends ApplicationException {
     private final String entityName;
     private final String entityIdAsString;
 
-    public EntityVersionMismatchException(String entityName, String entityIdAsString) {
-        super("server-side entity version mismatch or optimistic concurrency control/locking error [%s][%s]".formatted(
-                entityName, entityIdAsString
-        ));
-
+    public ClientSideEntityVersionMismatchException(String entityName, String entityIdAsString) {
+        super("client-held entity doesn't match the server-side version(outdated entity)");
         this.entityName = entityName;
         this.entityIdAsString = entityIdAsString;
     }
 
     @Override
     public String problemKey() {
-        return "require_another_try";
+        return "client_side_entity_version_mismatch";
     }
 
     @Override
     public short statusCode() {
-        return 409;
+        return 412;
     }
 }

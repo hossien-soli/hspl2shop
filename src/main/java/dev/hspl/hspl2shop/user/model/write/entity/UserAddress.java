@@ -22,7 +22,8 @@ public class UserAddress {
     @Nullable
     private PhoneNumber secondaryPhoneNumber; // optional
 
-    private short cityId;
+    private short cityId; // this id should be validated in implementations(sql constraints for sql databases)
+    // or custom code for other databases/implementations(mongodb)
 
     private LiteralFullAddress literalFullAddress;
 

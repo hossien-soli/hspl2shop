@@ -2,10 +2,10 @@ package dev.hspl.hspl2shop.user.model.impl;
 
 import dev.hspl.hspl2shop.common.exception.EntityVersionMismatchException;
 import dev.hspl.hspl2shop.common.value.PhoneNumber;
-import dev.hspl.hspl2shop.user.model.write.entity.VerificationSession;
-import dev.hspl.hspl2shop.user.model.write.repository.VerificationSessionRepository;
 import dev.hspl.hspl2shop.user.model.impl.jpa.entity.VerificationSessionJpaEntity;
 import dev.hspl.hspl2shop.user.model.impl.jpa.repository.VerificationSessionJpaRepository;
+import dev.hspl.hspl2shop.user.model.write.entity.VerificationSession;
+import dev.hspl.hspl2shop.user.model.write.repository.VerificationSessionRepository;
 import dev.hspl.hspl2shop.user.value.ProtectedVerificationCode;
 import dev.hspl.hspl2shop.user.value.RequestClientIdentifier;
 import jakarta.persistence.OptimisticLockException;
@@ -45,7 +45,7 @@ public class SqlJpaVerificationSessionRepository implements VerificationSessionR
                     .version(session.getVersion())
                     .build());
         } catch (OptimisticLockException exception) {
-            throw new EntityVersionMismatchException("VerificationSession", session.getId().toString());
+            throw new EntityVersionMismatchException(VerificationSession.class.getSimpleName(), session.getId().toString());
         }
     }
 }
