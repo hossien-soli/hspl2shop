@@ -1,4 +1,4 @@
-package dev.hspl.hspl2shop.user.value;
+package dev.hspl.hspl2shop.common.value;
 
 import org.jspecify.annotations.NullMarked;
 

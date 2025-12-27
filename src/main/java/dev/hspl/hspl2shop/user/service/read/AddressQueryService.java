@@ -1,10 +1,13 @@
 package dev.hspl.hspl2shop.user.service.read;
 
+import dev.hspl.hspl2shop.common.DomainUser;
 import dev.hspl.hspl2shop.user.exception.InvalidProvinceIdException;
 import dev.hspl.hspl2shop.user.model.read.dto.ProvinceCityDto;
 import dev.hspl.hspl2shop.user.model.read.dto.CityDto;
 import dev.hspl.hspl2shop.user.model.read.dto.ProvinceDto;
+import dev.hspl.hspl2shop.user.model.read.dto.UserAddressDto;
 import dev.hspl.hspl2shop.user.model.read.repository.ProvinceCityQueryRepository;
+import dev.hspl.hspl2shop.user.model.read.repository.UserAddressQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AddressQueryService {
     private final ProvinceCityQueryRepository provinceCityQueryRepository;
+    private final UserAddressQueryRepository userAddressQueryRepository;
+
+    public List<UserAddressDto> fetchAllUserAddresses(DomainUser user) {
+        return userAddressQueryRepository.queryAll(user.id());
+    }
 
     public List<ProvinceDto> fetchAllProvinces() {
         return provinceCityQueryRepository.queryAllProvinces();

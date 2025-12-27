@@ -8,10 +8,12 @@ import dev.hspl.hspl2shop.user.model.write.entity.VerificationSession;
 import dev.hspl.hspl2shop.user.model.write.repository.VerificationSessionRepository;
 import dev.hspl.hspl2shop.user.value.ProtectedVerificationCode;
 import dev.hspl.hspl2shop.user.value.RequestClientIdentifier;
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,6 +34,15 @@ public class SqlJpaVerificationSessionRepository implements VerificationSessionR
     }
 
     @Override
+    public Optional<LocalDateTime> findLastSessionCreatedAt(PhoneNumber phoneNumber, RequestClientIdentifier requestClientIdentifier) {
+        return jpaRepository.findLastSessionsByPhoneAndClientId(
+                phoneNumber.value(),
+                requestClientIdentifier.value(),
+                Limit.of(1)
+        ).stream().findFirst();
+    }
+
+    @Override
     public void save(VerificationSession session) throws EntityVersionMismatchException {
         try {
             jpaRepository.save(VerificationSessionJpaEntity.builder()
@@ -44,7 +55,7 @@ public class SqlJpaVerificationSessionRepository implements VerificationSessionR
                     .createdAt(session.getCreatedAt())
                     .version(session.getVersion())
                     .build());
-        } catch (OptimisticLockException exception) {
+        } catch (OptimisticLockingFailureException exception) {
             throw new EntityVersionMismatchException(VerificationSession.class.getSimpleName(), session.getId().toString());
         }
     }

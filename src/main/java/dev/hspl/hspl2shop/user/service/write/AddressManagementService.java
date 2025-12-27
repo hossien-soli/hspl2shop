@@ -75,5 +75,37 @@ public class AddressManagementService {
             throw new ClientSideEntityVersionMismatchException(UserAddress.class.getSimpleName(), addressId.toString());
         }
 
+        MapLocation mapLocation = null;
+        if (addressInfo.locationLat() != null && addressInfo.locationLong() != null) {
+            mapLocation = new MapLocation(addressInfo.locationLat(), addressInfo.locationLong());
+        }
+
+        address.editAddress(
+                new FullName(addressInfo.deliveryFullName()),
+                new PhoneNumber(addressInfo.deliveryPhoneNumber()),
+                addressInfo.secondaryPhoneNumber() != null ? new PhoneNumber(addressInfo.secondaryPhoneNumber()) : null,
+                addressInfo.cityId(), new LiteralFullAddress(addressInfo.literalFullAddress()),
+                new PostalCode(addressInfo.postalCode()), mapLocation, LocalDateTime.now()
+        );
+
+        addressRepository.save(address);
+    }
+
+    public void deleteAddress(DomainUser user, short clientSideVersion, UUID addressId) {
+        if (!user.isAccountActive()) {
+            throw new AccountStateException(UserAction.DELETE_ADDRESS);
+        }
+
+        UserAddress address = addressRepository.find(addressId).orElseThrow(AddressNotFoundException::new);
+
+        if (!address.getUserId().equals(user.id())) {
+            throw new AddressNotFoundException();
+        }
+
+        if (address.getVersion() == null || address.getVersion() != clientSideVersion) {
+            throw new ClientSideEntityVersionMismatchException(UserAddress.class.getSimpleName(), addressId.toString());
+        }
+
+        addressRepository.delete(address);
     }
 }

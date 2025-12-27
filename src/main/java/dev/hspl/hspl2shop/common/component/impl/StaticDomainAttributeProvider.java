@@ -11,4 +11,9 @@ public class StaticDomainAttributeProvider implements DomainAttributeProvider {
     public short ruleUserMaxAddressAllowed() {
         return 10;
     }
+
+    @Override
+    public short delayLimitBetweenVerificationSessions() {
+        return 90; // seconds
+    }
 }

@@ -14,4 +14,6 @@ public interface UserAddressRepository {
     short countByUser(UUID userId);
 
     void save(UserAddress address) throws EntityVersionMismatchException;
+
+    void delete(UserAddress address) throws EntityVersionMismatchException;
 }

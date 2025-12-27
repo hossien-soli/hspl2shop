@@ -4,13 +4,13 @@ import dev.hspl.hspl2shop.common.exception.EntityVersionMismatchException;
 import dev.hspl.hspl2shop.common.value.EmailAddress;
 import dev.hspl.hspl2shop.common.value.FullName;
 import dev.hspl.hspl2shop.common.value.PhoneNumber;
-import dev.hspl.hspl2shop.user.model.write.entity.User;
-import dev.hspl.hspl2shop.user.model.write.repository.UserRepository;
 import dev.hspl.hspl2shop.user.model.impl.jpa.entity.UserJpaEntity;
 import dev.hspl.hspl2shop.user.model.impl.jpa.repository.UserJpaRepository;
+import dev.hspl.hspl2shop.user.model.write.entity.User;
+import dev.hspl.hspl2shop.user.model.write.repository.UserRepository;
 import dev.hspl.hspl2shop.user.value.ProtectedPassword;
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -35,7 +35,7 @@ public class SqlJpaUserRepository implements UserRepository {
 
     @Override
     public boolean existsByPhoneNumber(PhoneNumber phoneNumber) {
-        return ...;
+        return jpaRepository.existsByPhoneNumber(phoneNumber.value());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class SqlJpaUserRepository implements UserRepository {
                     .updatedAt(user.getUpdatedAt())
                     .version(user.getVersion())
                     .build());
-        } catch (OptimisticLockException exception) {
+        } catch (OptimisticLockingFailureException exception) {
             throw new EntityVersionMismatchException(User.class.getSimpleName(), user.getId().toString());
         }
     }

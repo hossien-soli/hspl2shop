@@ -8,5 +8,5 @@ import java.util.UUID;
 
 @NullMarked
 public interface UserJpaRepository extends JpaRepository<UserJpaEntity,UUID> {
-
+    boolean existsByPhoneNumber(String phoneNumber);
 }

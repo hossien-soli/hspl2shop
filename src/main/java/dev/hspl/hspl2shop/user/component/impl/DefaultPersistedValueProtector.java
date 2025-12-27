@@ -2,7 +2,7 @@ package dev.hspl.hspl2shop.user.component.impl;
 
 import dev.hspl.hspl2shop.user.component.PersistedValueProtector;
 import dev.hspl.hspl2shop.user.value.PlainPassword;
-import dev.hspl.hspl2shop.user.value.PlainVerificationCode;
+import dev.hspl.hspl2shop.common.value.PlainVerificationCode;
 import dev.hspl.hspl2shop.user.value.ProtectedPassword;
 import dev.hspl.hspl2shop.user.value.ProtectedVerificationCode;
 import lombok.RequiredArgsConstructor;

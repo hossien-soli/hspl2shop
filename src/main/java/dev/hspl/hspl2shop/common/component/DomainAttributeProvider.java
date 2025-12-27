@@ -8,4 +8,6 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public interface DomainAttributeProvider {
     short ruleUserMaxAddressAllowed(); // maximum number of address a user can register
+
+    short delayLimitBetweenVerificationSessions(); // seconds
 }
