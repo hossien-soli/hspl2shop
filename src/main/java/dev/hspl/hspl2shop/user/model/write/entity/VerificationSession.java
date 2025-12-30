@@ -1,6 +1,7 @@
 package dev.hspl.hspl2shop.user.model.write.entity;
 
 import dev.hspl.hspl2shop.common.value.PhoneNumber;
+import dev.hspl.hspl2shop.user.exception.InvalidVerificationSessionException;
 import dev.hspl.hspl2shop.user.value.PhoneVerificationPurpose;
 import dev.hspl.hspl2shop.user.value.ProtectedVerificationCode;
 import dev.hspl.hspl2shop.user.value.RequestClientIdentifier;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -69,5 +71,26 @@ public class VerificationSession {
     ) {
         return new VerificationSession(id, phoneNumber, verificationCode, requestClientIdentifier,
                 purpose, verified, createdAt, version);
+    }
+
+    public void checkVerifiable(
+            PhoneVerificationPurpose purpose,
+            RequestClientIdentifier requestClientIdentifier,
+            LocalDateTime currentDateTime,
+            short verificationSessionLifetime // seconds
+    ) {
+        long secondsElapsed = Math.abs(Duration.between(this.createdAt, currentDateTime).toSeconds());
+
+        boolean validate = !this.verified && this.purpose.equals(purpose) &&
+                this.requestClientIdentifier.equals(requestClientIdentifier) &&
+                secondsElapsed <= verificationSessionLifetime;
+
+        if (!validate) {
+            throw new InvalidVerificationSessionException(this.phoneNumber);
+        }
+    }
+
+    public void markAsVerified() {
+        this.verified = true;
     }
 }

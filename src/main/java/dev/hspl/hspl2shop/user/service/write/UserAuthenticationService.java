@@ -2,20 +2,25 @@ package dev.hspl.hspl2shop.user.service.write;
 
 import dev.hspl.hspl2shop.common.component.ApplicationUuidGenerator;
 import dev.hspl.hspl2shop.common.component.DomainAttributeProvider;
+import dev.hspl.hspl2shop.common.component.DomainEventPublisher;
+import dev.hspl.hspl2shop.common.event.CustomerRegistrationEvent;
+import dev.hspl.hspl2shop.common.value.FullName;
 import dev.hspl.hspl2shop.common.value.PhoneNumber;
 import dev.hspl.hspl2shop.common.value.PlainVerificationCode;
+import dev.hspl.hspl2shop.common.value.UserRole;
 import dev.hspl.hspl2shop.notification.NotificationModuleApi;
 import dev.hspl.hspl2shop.user.component.PersistedValueProtector;
-import dev.hspl.hspl2shop.user.exception.PhoneAlreadyRegisteredException;
-import dev.hspl.hspl2shop.user.exception.PhoneNotRegisteredException;
-import dev.hspl.hspl2shop.user.exception.PhoneVerificationLimitationException;
+import dev.hspl.hspl2shop.user.exception.*;
+import dev.hspl.hspl2shop.user.model.write.entity.RefreshToken;
+import dev.hspl.hspl2shop.user.model.write.entity.User;
 import dev.hspl.hspl2shop.user.model.write.entity.VerificationSession;
+import dev.hspl.hspl2shop.user.model.write.repository.RefreshTokenRepository;
 import dev.hspl.hspl2shop.user.model.write.repository.UserRepository;
 import dev.hspl.hspl2shop.user.model.write.repository.VerificationSessionRepository;
-import dev.hspl.hspl2shop.user.service.dto.CustomerRegistrationDto;
-import dev.hspl.hspl2shop.user.service.dto.RequestVerificationDto;
-import dev.hspl.hspl2shop.user.service.dto.VerificationRequestResult;
+import dev.hspl.hspl2shop.user.service.dto.*;
 import dev.hspl.hspl2shop.user.value.PhoneVerificationPurpose;
+import dev.hspl.hspl2shop.user.value.PlainOpaqueToken;
+import dev.hspl.hspl2shop.user.value.PlainPassword;
 import dev.hspl.hspl2shop.user.value.RequestClientIdentifier;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
@@ -25,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
@@ -39,6 +45,8 @@ public class UserAuthenticationService {
     private final DomainAttributeProvider domainAttributeProvider;
     private final NotificationModuleApi notificationModuleApi;
     private final SecureRandom random;
+    private final DomainEventPublisher eventPublisher;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public VerificationRequestResult requestCustomerPhoneVerification(
             RequestClientIdentifier requestClientIdentifier, RequestVerificationDto data
@@ -85,23 +93,109 @@ public class UserAuthenticationService {
 
         notificationModuleApi.deliverVerificationSms(phoneNumber, verificationCode);
 
-        return new VerificationRequestResult(newSessionId, delayBetweenSessions);
+        return new VerificationRequestResult(newSessionId, delayBetweenSessions,
+                domainAttributeProvider.verificationSessionLifetime());
     }
 
     public void registerNewCustomer(
             RequestClientIdentifier requestClientIdentifier, CustomerRegistrationDto data
     ) {
+        FullName userFullName = new FullName(data.fullName());
+        PlainPassword userPassword = new PlainPassword(data.password());
 
-        // expiration
-        // client identifier should match
-        // code should be correct
-        // check phone number unique again
-        // register user
+        VerificationSession session = verificationSessionRepository.find(data.verificationSessionId())
+                .orElseThrow(VerificationSessionNotFoundException::new);
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        session.checkVerifiable(PhoneVerificationPurpose.REGISTRATION, requestClientIdentifier,
+                currentDateTime, domainAttributeProvider.verificationSessionLifetime());
+
+        if (!persistedValueProtector.matches(new PlainVerificationCode(data.verificationCode()), session.getVerificationCode())) {
+            throw new IncorrectVerificationCodeException(session.getPhoneNumber());
+        }
+
+        boolean phoneExists = userRepository.existsByPhoneNumber(session.getPhoneNumber());
+        if (phoneExists) {
+            throw new PhoneAlreadyRegisteredException(session.getPhoneNumber(), false);
+        }
+
+        UUID newUserId = uuidGenerator.generateNew();
+
+        User newUser = User.newUser(
+                newUserId, userFullName, session.getPhoneNumber(),
+                persistedValueProtector.protect(userPassword), null,
+                UserRole.CUSTOMER, currentDateTime
+        );
+
+        verificationSessionRepository.save(session);
+        userRepository.save(newUser);
+
+        eventPublisher.publish(new CustomerRegistrationEvent(newUserId, userFullName, session.getPhoneNumber()));
     }
 
     public void resetCustomerPassword(
-            UUID verificationSessionId
+            RequestClientIdentifier requestClientIdentifier, PasswordResetDto data
     ) {
+        PlainPassword userPassword = new PlainPassword(data.password());
 
+        VerificationSession session = verificationSessionRepository.find(data.verificationSessionId())
+                .orElseThrow(VerificationSessionNotFoundException::new);
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        session.checkVerifiable(PhoneVerificationPurpose.PASSWORD_RESET, requestClientIdentifier,
+                currentDateTime, domainAttributeProvider.verificationSessionLifetime());
+
+        if (!persistedValueProtector.matches(new PlainVerificationCode(data.verificationCode()), session.getVerificationCode())) {
+            throw new IncorrectVerificationCodeException(session.getPhoneNumber());
+        }
+
+        User user = userRepository.findByPhoneNumber(session.getPhoneNumber())
+                .orElseThrow(() -> new UserNotFoundException("password_reset_invalid_phone_number"));
+
+        if (!user.getRole().equals(UserRole.CUSTOMER)) {
+            throw new UserNotFoundException("password_reset_invalid_role");
+        }
+
+        user.updatePassword(persistedValueProtector.protect(userPassword), currentDateTime);
+
+        userRepository.save(user);
+
+        // TODO: invalidate all login sessions of user
+    }
+
+    public TokenPairDto login(
+            RequestClientIdentifier requestClientIdentifier, LoginDto data
+    ) {
+        var phoneNumber = new PhoneNumber(data.phoneNumber());
+        var password = new PlainPassword(data.password());
+
+        User user = userRepository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new BadCredentialsLoginException(phoneNumber));
+
+        if (!persistedValueProtector.matches(password, user.getPassword())) {
+            throw new BadCredentialsLoginException(phoneNumber);
+        }
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        UUID newTokenId = uuidGenerator.generateNew();
+        UUID newSessionId = uuidGenerator.generateNew();
+
+        byte[] randomBytes = new byte[20];
+        random.nextBytes(randomBytes);
+        String rawToken = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+        PlainOpaqueToken opaqueToken = new PlainOpaqueToken(rawToken);
+
+        RefreshToken refreshToken = RefreshToken.newLogin(newTokenId, newSessionId, user.getId(),
+                requestClientIdentifier, persistedValueProtector.protect(opaqueToken),
+                lifetimeHours, currentDateTime);
+
+        // generate jwt token
+
+        refreshTokenRepository.save(refreshToken);
+
+        // login domain event for notifying user
+
+        return new TokenPairDto(jwtAccessToken, newTokenId + "." + rawToken);
     }
 }

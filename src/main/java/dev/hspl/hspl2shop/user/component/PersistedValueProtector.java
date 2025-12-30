@@ -1,9 +1,7 @@
 package dev.hspl.hspl2shop.user.component;
 
-import dev.hspl.hspl2shop.user.value.PlainPassword;
+import dev.hspl.hspl2shop.user.value.*;
 import dev.hspl.hspl2shop.common.value.PlainVerificationCode;
-import dev.hspl.hspl2shop.user.value.ProtectedPassword;
-import dev.hspl.hspl2shop.user.value.ProtectedVerificationCode;
 import org.jspecify.annotations.NullMarked;
 
 // protect/hash values that should be persisted in database
@@ -15,4 +13,7 @@ public interface PersistedValueProtector {
 
     ProtectedVerificationCode protect(PlainVerificationCode verificationCode);
     boolean matches(PlainVerificationCode verificationCode, ProtectedVerificationCode protectedVerificationCode);
+
+    ProtectedOpaqueToken protect(PlainOpaqueToken opaqueToken);
+    boolean matches(PlainOpaqueToken opaqueToken, ProtectedOpaqueToken protectedOpaqueToken);
 }

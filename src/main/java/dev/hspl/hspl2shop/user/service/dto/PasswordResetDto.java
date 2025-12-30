@@ -7,17 +7,14 @@ import org.jspecify.annotations.NullMarked;
 import java.util.UUID;
 
 @NullMarked
-public record CustomerRegistrationDto(
+public record PasswordResetDto(
         @NotNull(message = "phone_verification.session_id.required")
         UUID verificationSessionId,
 
         @NotBlank(message = "phone_verification.code.required")
         String verificationCode,
 
-        @NotBlank(message = "registration.full_name.required")
-        String fullName,
-
-        @NotBlank(message = "registration.password.required")
+        @NotBlank(message = "password_reset.new_password.required")
         String password
 ) {
 }

@@ -10,6 +10,7 @@ import dev.hspl.hspl2shop.user.model.write.entity.User;
 import dev.hspl.hspl2shop.user.model.write.repository.UserRepository;
 import dev.hspl.hspl2shop.user.value.ProtectedPassword;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
@@ -18,12 +19,25 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
+@NullMarked
 public class SqlJpaUserRepository implements UserRepository {
     private final UserJpaRepository jpaRepository;
 
     @Override
     public Optional<User> find(UUID id) {
         return jpaRepository.findById(id).map(jpaEntity -> User.existingUser(
+                jpaEntity.getId(), new FullName(jpaEntity.getFullName()),
+                new PhoneNumber(jpaEntity.getPhoneNumber()),
+                new ProtectedPassword(jpaEntity.getHashedPassword()),
+                jpaEntity.getEmailAddress() != null ? new EmailAddress(jpaEntity.getEmailAddress()) : null,
+                jpaEntity.getRole(), jpaEntity.isBanned(), jpaEntity.getCreatedAt(),
+                jpaEntity.getUpdatedAt(), jpaEntity.getVersion()
+        ));
+    }
+
+    @Override
+    public Optional<User> findByPhoneNumber(PhoneNumber phoneNumber) {
+        return jpaRepository.findByPhoneNumber(phoneNumber.value()).map(jpaEntity -> User.existingUser(
                 jpaEntity.getId(), new FullName(jpaEntity.getFullName()),
                 new PhoneNumber(jpaEntity.getPhoneNumber()),
                 new ProtectedPassword(jpaEntity.getHashedPassword()),

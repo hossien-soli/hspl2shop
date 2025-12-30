@@ -88,8 +88,9 @@ public class User implements DomainUser {
         this.updatedAt = currentDateTime;
     }
 
-    public void updatePassword(ProtectedPassword newPassword) {
+    public void updatePassword(ProtectedPassword newPassword, LocalDateTime currentDateTime) {
         this.password = newPassword;
+        this.updatedAt = currentDateTime;
     }
 
     public void banUser(LocalDateTime currentDateTime) {
@@ -122,10 +123,10 @@ public class User implements DomainUser {
         return phoneNumber;
     }
 
-    @Override
-    public EmailAddress emailAddress() {
-        return emailAddress;
-    }
+//    @Override
+//    public EmailAddress emailAddress() {
+//        return emailAddress;
+//    }
 
     @Override
     public UserRole role() {

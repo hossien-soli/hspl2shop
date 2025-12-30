@@ -1,10 +1,8 @@
 package dev.hspl.hspl2shop.user.component.impl;
 
 import dev.hspl.hspl2shop.user.component.PersistedValueProtector;
-import dev.hspl.hspl2shop.user.value.PlainPassword;
+import dev.hspl.hspl2shop.user.value.*;
 import dev.hspl.hspl2shop.common.value.PlainVerificationCode;
-import dev.hspl.hspl2shop.user.value.ProtectedPassword;
-import dev.hspl.hspl2shop.user.value.ProtectedVerificationCode;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,5 +32,15 @@ public class DefaultPersistedValueProtector implements PersistedValueProtector {
     @Override
     public boolean matches(PlainVerificationCode verificationCode, ProtectedVerificationCode protectedVerificationCode) {
         return passwordEncoder.matches(verificationCode.value(), protectedVerificationCode.value());
+    }
+
+    @Override
+    public ProtectedOpaqueToken protect(PlainOpaqueToken opaqueToken) {
+        return new ProtectedOpaqueToken(passwordEncoder.encode(opaqueToken.value()));
+    }
+
+    @Override
+    public boolean matches(PlainOpaqueToken opaqueToken, ProtectedOpaqueToken protectedOpaqueToken) {
+        return passwordEncoder.matches(opaqueToken.value(), protectedOpaqueToken.value());
     }
 }

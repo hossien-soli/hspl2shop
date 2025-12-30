@@ -14,7 +14,7 @@ import java.security.SecureRandom;
 import java.util.Locale;
 
 @Configuration(proxyBeanMethods = false)
-//@EnableAsync
+@EnableAsync
 public class MasterConfig {
     @Bean
     public SecureRandom applicationSecureRandom() {
@@ -31,7 +31,7 @@ public class MasterConfig {
         var result = new ResourceBundleMessageSource();
         result.setBasenames("messages");
         result.setDefaultEncoding("UTF-8");
-        result.setDefaultLocale(Locale.of("fa","IR"));
+        result.setDefaultLocale(Locale.of("fa", "IR"));
         result.setFallbackToSystemLocale(false);
         result.setUseCodeAsDefaultMessage(true);
         return result;

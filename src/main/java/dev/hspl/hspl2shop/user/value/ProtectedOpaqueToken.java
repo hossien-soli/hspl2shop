@@ -2,11 +2,11 @@ package dev.hspl.hspl2shop.user.value;
 
 import org.jspecify.annotations.NullMarked;
 
-// hashed password for persistence
+// hashed opaque token for persistence
 
 @NullMarked
-public record ProtectedPassword(String value) {
-    public ProtectedPassword {
+public record ProtectedOpaqueToken(String value) {
+    public ProtectedOpaqueToken {
         // TODO: add validation throw exception
     }
 }

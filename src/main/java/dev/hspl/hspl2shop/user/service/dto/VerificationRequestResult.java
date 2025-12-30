@@ -9,6 +9,7 @@ import java.util.UUID;
 @NullMarked
 public record VerificationRequestResult(
         UUID verificationSessionId,
-        short secondsToNextRequest
+        short secondsToNextRequest,
+        short verificationSessionLifetime
 ) {
 }

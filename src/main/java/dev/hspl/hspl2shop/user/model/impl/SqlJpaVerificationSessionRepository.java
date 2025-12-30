@@ -9,6 +9,7 @@ import dev.hspl.hspl2shop.user.model.write.repository.VerificationSessionReposit
 import dev.hspl.hspl2shop.user.value.ProtectedVerificationCode;
 import dev.hspl.hspl2shop.user.value.RequestClientIdentifier;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
+@NullMarked
 public class SqlJpaVerificationSessionRepository implements VerificationSessionRepository {
     private final VerificationSessionJpaRepository jpaRepository;
 

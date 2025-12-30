@@ -4,6 +4,7 @@ import dev.hspl.hspl2shop.common.exception.EntityVersionMismatchException;
 import dev.hspl.hspl2shop.common.value.PhoneNumber;
 import dev.hspl.hspl2shop.user.model.write.entity.VerificationSession;
 import dev.hspl.hspl2shop.user.value.RequestClientIdentifier;
+import org.jspecify.annotations.NullMarked;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 // Consider redis repository implementation if application need better performance
 
+@NullMarked
 public interface VerificationSessionRepository {
     Optional<VerificationSession> find(UUID id);
 

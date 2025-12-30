@@ -16,4 +16,9 @@ public class StaticDomainAttributeProvider implements DomainAttributeProvider {
     public short delayLimitBetweenVerificationSessions() {
         return 90; // seconds
     }
+
+    @Override
+    public short verificationSessionLifetime() {
+        return 4 * 60; // seconds
+    }
 }

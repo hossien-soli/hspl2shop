@@ -16,7 +16,7 @@ public interface DomainUser {
 
     PhoneNumber phoneNumber();
 
-    EmailAddress emailAddress();
+    //EmailAddress emailAddress();
 
     UserRole role();
 
