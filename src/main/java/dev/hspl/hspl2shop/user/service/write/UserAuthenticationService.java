@@ -1,14 +1,16 @@
 package dev.hspl.hspl2shop.user.service.write;
 
 import dev.hspl.hspl2shop.common.component.ApplicationUuidGenerator;
-import dev.hspl.hspl2shop.common.component.DomainAttributeProvider;
+import dev.hspl.hspl2shop.common.component.ApplicationAttributeProvider;
 import dev.hspl.hspl2shop.common.component.DomainEventPublisher;
 import dev.hspl.hspl2shop.common.event.CustomerRegistrationEvent;
+import dev.hspl.hspl2shop.common.event.LoginEvent;
 import dev.hspl.hspl2shop.common.value.FullName;
 import dev.hspl.hspl2shop.common.value.PhoneNumber;
 import dev.hspl.hspl2shop.common.value.PlainVerificationCode;
 import dev.hspl.hspl2shop.common.value.UserRole;
 import dev.hspl.hspl2shop.notification.NotificationModuleApi;
+import dev.hspl.hspl2shop.user.component.DomainUserJWTService;
 import dev.hspl.hspl2shop.user.component.PersistedValueProtector;
 import dev.hspl.hspl2shop.user.exception.*;
 import dev.hspl.hspl2shop.user.model.write.entity.RefreshToken;
@@ -42,11 +44,12 @@ public class UserAuthenticationService {
     private final PersistedValueProtector persistedValueProtector;
     private final VerificationSessionRepository verificationSessionRepository;
     private final UserRepository userRepository;
-    private final DomainAttributeProvider domainAttributeProvider;
+    private final ApplicationAttributeProvider attributeProvider;
     private final NotificationModuleApi notificationModuleApi;
     private final SecureRandom random;
     private final DomainEventPublisher eventPublisher;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final DomainUserJWTService jwtService;
 
     public VerificationRequestResult requestCustomerPhoneVerification(
             RequestClientIdentifier requestClientIdentifier, RequestVerificationDto data
@@ -55,7 +58,7 @@ public class UserAuthenticationService {
         var purpose = data.purpose();
 
         final LocalDateTime currentDateTime = LocalDateTime.now();
-        final short delayBetweenSessions = domainAttributeProvider.delayLimitBetweenVerificationSessions();
+        final short delayBetweenSessions = attributeProvider.delayLimitBetweenVerificationSessions();
 
         verificationSessionRepository.findLastSessionCreatedAt(phoneNumber, requestClientIdentifier)
                 .ifPresent(createdAt -> {
@@ -94,7 +97,7 @@ public class UserAuthenticationService {
         notificationModuleApi.deliverVerificationSms(phoneNumber, verificationCode);
 
         return new VerificationRequestResult(newSessionId, delayBetweenSessions,
-                domainAttributeProvider.verificationSessionLifetime());
+                attributeProvider.verificationSessionLifetime());
     }
 
     public void registerNewCustomer(
@@ -108,7 +111,7 @@ public class UserAuthenticationService {
 
         LocalDateTime currentDateTime = LocalDateTime.now();
         session.checkVerifiable(PhoneVerificationPurpose.REGISTRATION, requestClientIdentifier,
-                currentDateTime, domainAttributeProvider.verificationSessionLifetime());
+                currentDateTime, attributeProvider.verificationSessionLifetime());
 
         if (!persistedValueProtector.matches(new PlainVerificationCode(data.verificationCode()), session.getVerificationCode())) {
             throw new IncorrectVerificationCodeException(session.getPhoneNumber());
@@ -143,7 +146,7 @@ public class UserAuthenticationService {
 
         LocalDateTime currentDateTime = LocalDateTime.now();
         session.checkVerifiable(PhoneVerificationPurpose.PASSWORD_RESET, requestClientIdentifier,
-                currentDateTime, domainAttributeProvider.verificationSessionLifetime());
+                currentDateTime, attributeProvider.verificationSessionLifetime());
 
         if (!persistedValueProtector.matches(new PlainVerificationCode(data.verificationCode()), session.getVerificationCode())) {
             throw new IncorrectVerificationCodeException(session.getPhoneNumber());
@@ -163,7 +166,7 @@ public class UserAuthenticationService {
         // TODO: invalidate all login sessions of user
     }
 
-    public TokenPairDto login(
+    public LoginResult login(
             RequestClientIdentifier requestClientIdentifier, LoginDto data
     ) {
         var phoneNumber = new PhoneNumber(data.phoneNumber());
@@ -186,16 +189,19 @@ public class UserAuthenticationService {
         String rawToken = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
         PlainOpaqueToken opaqueToken = new PlainOpaqueToken(rawToken);
 
+        short lifetimeHours = attributeProvider.refreshTokenLifetimeHours();
+
         RefreshToken refreshToken = RefreshToken.newLogin(newTokenId, newSessionId, user.getId(),
                 requestClientIdentifier, persistedValueProtector.protect(opaqueToken),
                 lifetimeHours, currentDateTime);
 
-        // generate jwt token
+        String jwtAccessToken = jwtService.generateTokenForUser(user);
 
         refreshTokenRepository.save(refreshToken);
 
-        // login domain event for notifying user
+        eventPublisher.publish(new LoginEvent(user.getRole(), user.getId(), newSessionId,
+                user.getFullName(), user.getPhoneNumber()));
 
-        return new TokenPairDto(jwtAccessToken, newTokenId + "." + rawToken);
+        return new LoginResult(jwtAccessToken, newTokenId + "." + rawToken, lifetimeHours);
     }
 }

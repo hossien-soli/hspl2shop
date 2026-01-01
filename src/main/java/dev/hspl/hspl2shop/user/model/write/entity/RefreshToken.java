@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 // we should have a scheduled task for deleting old finished tokens & sessions(IMPORTANT)
+// if refresh token expires client should redirect user to login page
 
 @Getter
 @NullMarked

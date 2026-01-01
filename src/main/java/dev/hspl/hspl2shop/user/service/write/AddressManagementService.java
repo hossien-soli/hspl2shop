@@ -2,7 +2,7 @@ package dev.hspl.hspl2shop.user.service.write;
 
 import dev.hspl.hspl2shop.common.DomainUser;
 import dev.hspl.hspl2shop.common.component.ApplicationUuidGenerator;
-import dev.hspl.hspl2shop.common.component.DomainAttributeProvider;
+import dev.hspl.hspl2shop.common.component.ApplicationAttributeProvider;
 import dev.hspl.hspl2shop.common.exception.AccountStateException;
 import dev.hspl.hspl2shop.common.exception.ClientSideEntityVersionMismatchException;
 import dev.hspl.hspl2shop.common.value.*;
@@ -26,7 +26,7 @@ import java.util.UUID;
 public class AddressManagementService {
     private final ApplicationUuidGenerator uuidGenerator;
     private final UserAddressRepository addressRepository;
-    private final DomainAttributeProvider domainAttributeProvider;
+    private final ApplicationAttributeProvider attributeProvider;
 
     public UUID registerNewAddress(DomainUser user, AddressInfoDto addressInfo) {
         if (!user.isAccountActive()) {
@@ -34,7 +34,7 @@ public class AddressManagementService {
         }
 
         short userAddressCount = addressRepository.countByUser(user.id());
-        if (userAddressCount >= domainAttributeProvider.ruleUserMaxAddressAllowed()) {
+        if (userAddressCount >= attributeProvider.ruleUserMaxAddressAllowed()) {
             throw new AddressRegistrationLimitationException();
         }
 
