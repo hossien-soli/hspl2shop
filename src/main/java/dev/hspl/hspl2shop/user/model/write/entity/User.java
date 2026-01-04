@@ -36,6 +36,9 @@ public class User implements DomainUser {
     private LocalDateTime updatedAt;
 
     @Nullable
+    private LocalDateTime lastTokenRefresh;
+
+    @Nullable
     private final Short version; // this field should be managed by Repository implementations
     // in domain or business logic only use it for client-side concurrency control checks
     // null = entity is new and should be persisted
@@ -44,7 +47,8 @@ public class User implements DomainUser {
             UUID id, FullName fullName, PhoneNumber phoneNumber,
             ProtectedPassword password, @Nullable EmailAddress emailAddress,
             UserRole role, boolean banned, LocalDateTime createdAt,
-            @Nullable LocalDateTime updatedAt, @Nullable Short version
+            @Nullable LocalDateTime updatedAt, @Nullable LocalDateTime lastTokenRefresh,
+            @Nullable Short version
     ) {
         this.id = id;
         this.fullName = fullName;
@@ -55,6 +59,7 @@ public class User implements DomainUser {
         this.banned = banned;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.lastTokenRefresh = lastTokenRefresh;
         this.version = version;
     }
 
@@ -63,17 +68,18 @@ public class User implements DomainUser {
             @Nullable EmailAddress emailAddress, UserRole role, LocalDateTime currentDateTime
     ) {
         return new User(newId, fullName, phoneNumber, password, emailAddress, role,
-                false, currentDateTime, null, null);
+                false, currentDateTime, null, null, null);
     }
 
     public static User existingUser(
             UUID id, FullName fullName, PhoneNumber phoneNumber,
             ProtectedPassword password, @Nullable EmailAddress emailAddress,
             UserRole role, boolean banned, LocalDateTime createdAt,
-            @Nullable LocalDateTime updatedAt, @Nullable Short version
+            @Nullable LocalDateTime updatedAt, @Nullable LocalDateTime lastTokenRefresh,
+            @Nullable Short version
     ) {
         return new User(id, fullName, phoneNumber, password, emailAddress, role, banned,
-                createdAt, updatedAt, version);
+                createdAt, updatedAt, lastTokenRefresh, version);
     }
 
     public void updateBasicInfo(FullName fullName, @Nullable EmailAddress emailAddress,
@@ -106,6 +112,10 @@ public class User implements DomainUser {
     public void changeUserRole(UserRole newRole, LocalDateTime currentDateTime) {
         this.role = newRole;
         this.updatedAt = currentDateTime;
+    }
+
+    public void newTokenRefresh(LocalDateTime currentDateTime) {
+        this.lastTokenRefresh = currentDateTime;
     }
 
     @Override

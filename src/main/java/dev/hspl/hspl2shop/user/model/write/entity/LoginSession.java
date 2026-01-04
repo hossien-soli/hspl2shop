@@ -69,5 +69,18 @@ public class LoginSession {
                 createdAt, stateUpdatedAt, version);
     }
 
+    public void newTokenRefresh(RequestClientIdentifier requestClientIdentifier) {
+        this.requestClientIdentifier = requestClientIdentifier;
+        this.numberOfTokenRefresh++;
+    }
 
+    public void updateState(
+            LoginSessionState newState,
+            RequestClientIdentifier requestClientIdentifier,
+            LocalDateTime currentDateTime
+    ) {
+        this.state = newState;
+        this.requestClientIdentifier = requestClientIdentifier;
+        this.stateUpdatedAt = currentDateTime;
+    }
 }

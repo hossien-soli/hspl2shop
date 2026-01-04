@@ -19,6 +19,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> {
+                    requests.requestMatchers("/auth/**").permitAll();
+
                     requests.requestMatchers("/address/province").permitAll();
                     requests.requestMatchers("/address/province/*").permitAll();
                     requests.requestMatchers("/address/city").permitAll();

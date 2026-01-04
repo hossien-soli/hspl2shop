@@ -5,8 +5,11 @@ import dev.hspl.hspl2shop.user.exception.PhoneVerificationLimitationException;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Locale;
@@ -45,5 +48,13 @@ public class GlobalWebExceptionHandler {
                 new ProblemMessage(problemKey, statusCode,
                         userFriendyMessage != null ? userFriendyMessage : defaultMessage, extraData)
         );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ProblemMessage handleValidationException(MethodArgumentNotValidException exception) {
+        System.out.println(exception.getAllErrors().stream().findFirst().get().getObjectName());
+        return new ProblemMessage("xxx", (short) 400, "s", null);
+        // TODO: complete this
     }
 }

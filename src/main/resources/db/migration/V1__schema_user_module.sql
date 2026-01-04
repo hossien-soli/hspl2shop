@@ -5,16 +5,17 @@ CREATE TYPE USER_ROLE AS ENUM ('CUSTOMER', 'MANAGER', 'OWNER');
 
 CREATE TABLE users
 (
-    id         UUID         NOT NULL,
-    name       SHORT_STRING NOT NULL,
-    phone      SHORT_STRING NOT NULL,
-    password   SHORT_STRING NOT NULL,
-    email      SHORT_STRING NULL,
-    role       USER_ROLE    NOT NULL,
-    banned     BOOLEAN      NOT NULL,
-    created_at TIMESTAMP    NOT NULL,
-    updated_at TIMESTAMP    NULL,
-    version    SMALLINT     NULL,
+    id            UUID         NOT NULL,
+    name          SHORT_STRING NOT NULL,
+    phone         SHORT_STRING NOT NULL,
+    password      SHORT_STRING NOT NULL,
+    email         SHORT_STRING NULL,
+    role          USER_ROLE    NOT NULL,
+    banned        BOOLEAN      NOT NULL,
+    created_at    TIMESTAMP    NOT NULL,
+    updated_at    TIMESTAMP    NULL,
+    token_refresh TIMESTAMP    NULL,
+    version       SMALLINT     NULL,
     CONSTRAINT pk_users PRIMARY KEY (id)
 );
 

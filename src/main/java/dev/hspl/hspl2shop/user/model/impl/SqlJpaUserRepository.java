@@ -31,7 +31,7 @@ public class SqlJpaUserRepository implements UserRepository {
                 new ProtectedPassword(jpaEntity.getHashedPassword()),
                 jpaEntity.getEmailAddress() != null ? new EmailAddress(jpaEntity.getEmailAddress()) : null,
                 jpaEntity.getRole(), jpaEntity.isBanned(), jpaEntity.getCreatedAt(),
-                jpaEntity.getUpdatedAt(), jpaEntity.getVersion()
+                jpaEntity.getUpdatedAt(), jpaEntity.getLastTokenRefresh(), jpaEntity.getVersion()
         ));
     }
 
@@ -43,7 +43,7 @@ public class SqlJpaUserRepository implements UserRepository {
                 new ProtectedPassword(jpaEntity.getHashedPassword()),
                 jpaEntity.getEmailAddress() != null ? new EmailAddress(jpaEntity.getEmailAddress()) : null,
                 jpaEntity.getRole(), jpaEntity.isBanned(), jpaEntity.getCreatedAt(),
-                jpaEntity.getUpdatedAt(), jpaEntity.getVersion()
+                jpaEntity.getUpdatedAt(), jpaEntity.getLastTokenRefresh(), jpaEntity.getVersion()
         ));
     }
 
@@ -65,6 +65,7 @@ public class SqlJpaUserRepository implements UserRepository {
                     .banned(user.isBanned())
                     .createdAt(user.getCreatedAt())
                     .updatedAt(user.getUpdatedAt())
+                    .lastTokenRefresh(user.getLastTokenRefresh())
                     .version(user.getVersion())
                     .build());
         } catch (OptimisticLockingFailureException exception) {

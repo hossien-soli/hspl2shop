@@ -30,6 +30,9 @@ public class ConfigFileApplicationAttributeProvider implements ApplicationAttrib
     @Value("${app.access-token-lifetime-minutes}")
     private short _accessTokenLifetimeMinutes;
 
+    @Value("${app.opaque-token-random-bytes-count}")
+    private short _opaqueTokenRandomBytesCount;
+
     @Override
     public short ruleUserMaxAddressAllowed() {
         return _ruleUserMaxAddressAllowed;
@@ -58,5 +61,10 @@ public class ConfigFileApplicationAttributeProvider implements ApplicationAttrib
     @Override
     public short accessTokenLifetimeMinutes() {
         return _accessTokenLifetimeMinutes;
+    }
+
+    @Override
+    public short opaqueTokenRandomBytesCount() {
+        return _opaqueTokenRandomBytesCount;
     }
 }

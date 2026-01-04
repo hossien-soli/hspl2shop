@@ -3,9 +3,9 @@ package dev.hspl.hspl2shop.user.service.dto;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-public record LoginResult(
+public record TokenResult(
         String accessToken,
-        String refreshToken,
+        String clientRefreshToken, // <refreshTokenId>.<plainOpaqueToken>
         short refreshTokenLifetimeHours
 ) {
 }

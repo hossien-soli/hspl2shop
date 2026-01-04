@@ -9,6 +9,7 @@ import dev.hspl.hspl2shop.user.model.read.dto.ProvinceDto;
 import dev.hspl.hspl2shop.user.service.dto.AddressInfoDto;
 import dev.hspl.hspl2shop.user.service.read.AddressQueryService;
 import dev.hspl.hspl2shop.user.service.write.AddressManagementService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -56,7 +57,7 @@ public class AddressController {
     @ResponseStatus(HttpStatus.CREATED)
     public Map<String, Object> registerNewAddress(
             Authentication authentication,
-            @RequestBody AddressInfoDto payload
+            @RequestBody @Valid AddressInfoDto payload
     ) {
         if (authentication.getPrincipal() instanceof DomainUser user) {
             UUID newAddressId = managementService.registerNewAddress(user, payload);
@@ -71,7 +72,7 @@ public class AddressController {
     public void editAddress(
             Authentication authentication,
             @PathVariable("addressId") UUID addressId,
-            @RequestBody AddressInfoDto payload,
+            @RequestBody @Valid AddressInfoDto payload,
             @RequestHeader("X-Version") short clientSideVersion
     ) {
         if (authentication.getPrincipal() instanceof DomainUser user) {

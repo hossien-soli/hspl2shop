@@ -19,4 +19,6 @@ public interface ApplicationAttributeProvider {
     String jwtSignatureSecret();
 
     short accessTokenLifetimeMinutes();
+
+    short opaqueTokenRandomBytesCount();
 }

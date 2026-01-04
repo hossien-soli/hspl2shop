@@ -1,11 +1,15 @@
 package dev.hspl.hspl2shop.user.model.write.entity;
 
+import dev.hspl.hspl2shop.user.exception.InvalidLoginSessionStateException;
+import dev.hspl.hspl2shop.user.value.LoginSessionState;
 import dev.hspl.hspl2shop.user.value.ProtectedOpaqueToken;
+import dev.hspl.hspl2shop.user.value.RefreshResult;
 import dev.hspl.hspl2shop.user.value.RequestClientIdentifier;
 import lombok.Getter;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -75,5 +79,30 @@ public class RefreshToken {
                 refreshedAt, version);
     }
 
+    public RefreshResult tryRefresh(
+            RequestClientIdentifier requestClientIdentifier,
+            LocalDateTime currentDateTime
+    ) {
+        LoginSession session = this.loginSession;
+        if (!session.getState().equals(LoginSessionState.ACTIVE)) {
+            throw new InvalidLoginSessionStateException(session.getUserId(), this.id, session.getState());
+        }
 
+        if (this.refreshed) {
+            session.updateState(LoginSessionState.INVALIDATED, requestClientIdentifier, currentDateTime);
+            return RefreshResult.REUSE_DETECTED;
+        }
+
+        long hoursElapsed = Math.abs(Duration.between(currentDateTime, this.createdAt).toHours());
+        if (hoursElapsed >= this.lifetimeHours) {
+            session.updateState(LoginSessionState.EXPIRED, requestClientIdentifier, currentDateTime);
+            return RefreshResult.EXPIRED;
+        }
+
+        session.newTokenRefresh(requestClientIdentifier);
+        this.refreshed = true;
+        this.refreshedAt = currentDateTime;
+
+        return RefreshResult.OK;
+    }
 }

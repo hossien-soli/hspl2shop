@@ -39,4 +39,9 @@ public class StaticApplicationAttributeProvider implements ApplicationAttributeP
     public short accessTokenLifetimeMinutes() {
         return 45; // minutes
     }
+
+    @Override
+    public short opaqueTokenRandomBytesCount() {
+        return 25;
+    }
 }

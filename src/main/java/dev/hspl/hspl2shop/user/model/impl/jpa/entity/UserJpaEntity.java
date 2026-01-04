@@ -51,6 +51,10 @@ public class UserJpaEntity {
     @Nullable
     private LocalDateTime updatedAt;
 
+    @Column(name = "token_refresh")
+    @Nullable
+    private LocalDateTime lastTokenRefresh;
+
     @Column(name = "version")
     @Version
     @Nullable

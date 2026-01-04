@@ -1,10 +1,11 @@
 package dev.hspl.hspl2shop.user.service.write;
 
-import dev.hspl.hspl2shop.common.component.ApplicationUuidGenerator;
 import dev.hspl.hspl2shop.common.component.ApplicationAttributeProvider;
+import dev.hspl.hspl2shop.common.component.ApplicationUuidGenerator;
 import dev.hspl.hspl2shop.common.component.DomainEventPublisher;
 import dev.hspl.hspl2shop.common.event.CustomerRegistrationEvent;
 import dev.hspl.hspl2shop.common.event.LoginEvent;
+import dev.hspl.hspl2shop.common.event.RefreshTokenReuseDetectedEvent;
 import dev.hspl.hspl2shop.common.value.FullName;
 import dev.hspl.hspl2shop.common.value.PhoneNumber;
 import dev.hspl.hspl2shop.common.value.PlainVerificationCode;
@@ -13,6 +14,7 @@ import dev.hspl.hspl2shop.notification.NotificationModuleApi;
 import dev.hspl.hspl2shop.user.component.DomainUserJWTService;
 import dev.hspl.hspl2shop.user.component.PersistedValueProtector;
 import dev.hspl.hspl2shop.user.exception.*;
+import dev.hspl.hspl2shop.user.model.write.entity.LoginSession;
 import dev.hspl.hspl2shop.user.model.write.entity.RefreshToken;
 import dev.hspl.hspl2shop.user.model.write.entity.User;
 import dev.hspl.hspl2shop.user.model.write.entity.VerificationSession;
@@ -20,10 +22,7 @@ import dev.hspl.hspl2shop.user.model.write.repository.RefreshTokenRepository;
 import dev.hspl.hspl2shop.user.model.write.repository.UserRepository;
 import dev.hspl.hspl2shop.user.model.write.repository.VerificationSessionRepository;
 import dev.hspl.hspl2shop.user.service.dto.*;
-import dev.hspl.hspl2shop.user.value.PhoneVerificationPurpose;
-import dev.hspl.hspl2shop.user.value.PlainOpaqueToken;
-import dev.hspl.hspl2shop.user.value.PlainPassword;
-import dev.hspl.hspl2shop.user.value.RequestClientIdentifier;
+import dev.hspl.hspl2shop.user.value.*;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Service;
@@ -33,6 +32,7 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -52,7 +52,7 @@ public class UserAuthenticationService {
     private final DomainUserJWTService jwtService;
 
     public VerificationRequestResult requestCustomerPhoneVerification(
-            RequestClientIdentifier requestClientIdentifier, RequestVerificationDto data
+            RequestClientIdentifier requestClientIdentifier, RequestPhoneVerificationDto data
     ) {
         var phoneNumber = new PhoneNumber(data.phoneNumber());
         var purpose = data.purpose();
@@ -166,7 +166,14 @@ public class UserAuthenticationService {
         // TODO: invalidate all login sessions of user
     }
 
-    public LoginResult login(
+    private PlainOpaqueToken generateNewOpaqueToken() {
+        byte[] randomBytes = new byte[attributeProvider.opaqueTokenRandomBytesCount()];
+        random.nextBytes(randomBytes);
+        String rawToken = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+        return new PlainOpaqueToken(rawToken);
+    }
+
+    public TokenResult login(
             RequestClientIdentifier requestClientIdentifier, LoginDto data
     ) {
         var phoneNumber = new PhoneNumber(data.phoneNumber());
@@ -184,10 +191,7 @@ public class UserAuthenticationService {
         UUID newTokenId = uuidGenerator.generateNew();
         UUID newSessionId = uuidGenerator.generateNew();
 
-        byte[] randomBytes = new byte[20];
-        random.nextBytes(randomBytes);
-        String rawToken = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
-        PlainOpaqueToken opaqueToken = new PlainOpaqueToken(rawToken);
+        PlainOpaqueToken opaqueToken = generateNewOpaqueToken();
 
         short lifetimeHours = attributeProvider.refreshTokenLifetimeHours();
 
@@ -197,11 +201,84 @@ public class UserAuthenticationService {
 
         String jwtAccessToken = jwtService.generateTokenForUser(user);
 
+        user.newTokenRefresh(currentDateTime);
+
         refreshTokenRepository.save(refreshToken);
+        userRepository.save(user);
 
         eventPublisher.publish(new LoginEvent(user.getRole(), user.getId(), newSessionId,
                 user.getFullName(), user.getPhoneNumber()));
 
-        return new LoginResult(jwtAccessToken, newTokenId + "." + rawToken, lifetimeHours);
+        return new TokenResult(jwtAccessToken, newTokenId + "." + opaqueToken.value(), lifetimeHours);
+    }
+
+    private Object[] validateClientRefreshToken(String clientRefreshToken) {
+        String[] splitResult = clientRefreshToken.split("//.");
+        if (splitResult.length != 2) {
+            throw new InvalidClientRefreshTokenException(clientRefreshToken);
+        }
+
+        UUID refreshTokenId = null;
+        PlainOpaqueToken token = null;
+        try {
+            refreshTokenId = UUID.fromString(splitResult[0]);
+            token = new PlainOpaqueToken(splitResult[1]);
+        } catch (Exception exception) {
+            throw new InvalidClientRefreshTokenException(clientRefreshToken);
+        }
+
+        return new Object[]{refreshTokenId, token};
+    }
+
+    public Optional<TokenResult> tokenRefreshAttempt(
+            RequestClientIdentifier requestClientIdentifier, TokenRefreshDto data
+    ) {
+        Object[] validateResult = validateClientRefreshToken(data.clientRefreshToken());
+        UUID refreshTokenId = (UUID) validateResult[0];
+        PlainOpaqueToken opaqueToken = (PlainOpaqueToken) validateResult[1];
+
+        RefreshToken refreshToken = refreshTokenRepository.find(refreshTokenId)
+                .orElseThrow(() -> new InvalidClientRefreshTokenException(data.clientRefreshToken()));
+
+        if (!persistedValueProtector.matches(opaqueToken, refreshToken.getToken())) {
+            throw new InvalidClientRefreshTokenException(data.clientRefreshToken());
+        }
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        RefreshResult refreshResult = refreshToken.tryRefresh(requestClientIdentifier, currentDateTime);
+
+        refreshTokenRepository.save(refreshToken);
+
+        LoginSession session = refreshToken.getLoginSession();
+
+        User user = userRepository.find(session.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("token refresh"));
+
+        if (refreshResult.equals(RefreshResult.OK)) {
+            UUID newTokenId = uuidGenerator.generateNew();
+
+            PlainOpaqueToken newOpaqueToken = generateNewOpaqueToken();
+            short lifetimeHours = attributeProvider.refreshTokenLifetimeHours();
+
+            RefreshToken newRefreshToken = RefreshToken.newToken(newTokenId, session,
+                    persistedValueProtector.protect(newOpaqueToken),
+                    lifetimeHours, currentDateTime);
+
+            String newJwtAccessToken = jwtService.generateTokenForUser(user);
+
+            user.newTokenRefresh(currentDateTime);
+
+            refreshTokenRepository.save(newRefreshToken);
+            userRepository.save(user);
+
+            return Optional.of(new TokenResult(newJwtAccessToken,
+                    newTokenId + "." + newOpaqueToken.value(), lifetimeHours));
+        } else if (refreshResult.equals(RefreshResult.REUSE_DETECTED)) {
+            eventPublisher.publish(new RefreshTokenReuseDetectedEvent(refreshTokenId, session.getId(),
+                    session.getUserId(), requestClientIdentifier, user.getFullName(),
+                    user.getPhoneNumber()));
+        }
+
+        return Optional.empty();
     }
 }
