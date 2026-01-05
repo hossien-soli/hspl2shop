@@ -6,10 +6,10 @@ import org.jspecify.annotations.NullMarked;
 
 @Getter
 @NullMarked
-public class JWTGenerationErrorException extends ApplicationException {
+public class JwtGenerationErrorException extends ApplicationException {
     private final String actualMessage;
 
-    public JWTGenerationErrorException(String actualMessage) {
+    public JwtGenerationErrorException(String actualMessage) {
         super("error while generating JWT token with actual message[%s]".formatted(actualMessage));
         this.actualMessage = actualMessage;
     }

@@ -7,11 +7,13 @@ import org.jspecify.annotations.NullMarked;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -53,8 +55,18 @@ public class GlobalWebExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemMessage handleValidationException(MethodArgumentNotValidException exception) {
-        System.out.println(exception.getAllErrors().stream().findFirst().get().getObjectName());
-        return new ProblemMessage("xxx", (short) 400, "s", null);
-        // TODO: complete this
+        List<ObjectError> errors = exception.getAllErrors();
+        String problemKey = errors.isEmpty() ? null : errors.getFirst().getDefaultMessage();
+        problemKey = problemKey != null ? problemKey : "contact_support_message";
+
+        String defaultMessage = "something went wrong!";
+        String userFriendyMessage = messageSource.getMessage(
+                problemKey, null,
+                defaultMessage,
+                Locale.of("fa", "IR")
+        );
+
+        return new ProblemMessage(problemKey, (short) 400,
+                userFriendyMessage != null ? userFriendyMessage : defaultMessage, null);
     }
 }

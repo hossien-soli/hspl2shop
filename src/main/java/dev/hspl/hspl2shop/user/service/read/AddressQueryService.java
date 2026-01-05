@@ -1,6 +1,6 @@
 package dev.hspl.hspl2shop.user.service.read;
 
-import dev.hspl.hspl2shop.common.DomainUser;
+import dev.hspl.hspl2shop.common.ApplicationUser;
 import dev.hspl.hspl2shop.user.exception.InvalidProvinceIdException;
 import dev.hspl.hspl2shop.user.model.read.dto.ProvinceCityDto;
 import dev.hspl.hspl2shop.user.model.read.dto.CityDto;
@@ -23,7 +23,7 @@ public class AddressQueryService {
     private final ProvinceCityQueryRepository provinceCityQueryRepository;
     private final UserAddressQueryRepository userAddressQueryRepository;
 
-    public List<UserAddressDto> fetchAllUserAddresses(DomainUser user) {
+    public List<UserAddressDto> fetchAllUserAddresses(ApplicationUser user) {
         return userAddressQueryRepository.queryAll(user.id());
     }
 

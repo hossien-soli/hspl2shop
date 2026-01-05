@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import org.jspecify.annotations.NullMarked;
 
-@Entity(name = "Category")
+//@Entity(name = "Category")
 @Table(name = "categories")
 @AllArgsConstructor
 @NoArgsConstructor

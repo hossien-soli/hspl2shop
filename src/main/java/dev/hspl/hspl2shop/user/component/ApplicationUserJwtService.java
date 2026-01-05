@@ -6,10 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import dev.hspl.hspl2shop.common.DomainUser;
+import dev.hspl.hspl2shop.common.ApplicationUser;
 import dev.hspl.hspl2shop.common.component.ApplicationAttributeProvider;
-import dev.hspl.hspl2shop.user.exception.JWTGenerationErrorException;
-import dev.hspl.hspl2shop.user.exception.JWTTokenVerificationException;
+import dev.hspl.hspl2shop.user.exception.JwtGenerationErrorException;
+import dev.hspl.hspl2shop.user.exception.JwtTokenVerificationException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import java.time.Instant;
 @Component
 @ApplicationScope
 @RequiredArgsConstructor
-public class DomainUserJWTService {
+public class ApplicationUserJwtService {
     private final ApplicationAttributeProvider attributeProvider;
 
     private Algorithm algorithm;
@@ -38,7 +38,7 @@ public class DomainUserJWTService {
     private static final String CLAIM_USER_ROLE = "u_rl";
     private static final String CLAIM_USER_STATUS = "u_ss";
 
-    public String generateTokenForUser(DomainUser user) {
+    public String generateTokenForUser(ApplicationUser user) {
         try {
             return JWT.create()
                     .withSubject(user.id().toString())
@@ -51,15 +51,15 @@ public class DomainUserJWTService {
                     .withExpiresAt(Instant.now().plusSeconds(attributeProvider.accessTokenLifetimeMinutes() * 60))
                     .sign(this.algorithm);
         } catch (JWTCreationException exception) {
-            throw new JWTGenerationErrorException(exception.getMessage());
+            throw new JwtGenerationErrorException(exception.getMessage());
         }
     }
 
-    public DomainUser validateTokenAndExtractUserInfo(String token) {
+    public ApplicationUser validateTokenAndExtractUserInfo(String token) {
         try {
             DecodedJWT jwt = verifier.verify(token);
 
-            return new JWTPayloadDomainUser(
+            return new JwtPayloadApplicationUser(
                     jwt.getSubject(),
                     jwt.getClaim(CLAIM_USER_FULL_NAME).asString(),
                     jwt.getClaim(CLAIM_USER_PHONE_NUMBER).asString(),
@@ -67,7 +67,7 @@ public class DomainUserJWTService {
                     jwt.getClaim(CLAIM_USER_STATUS).asBoolean()
             );
         } catch (JWTVerificationException exception) {
-            throw new JWTTokenVerificationException(exception.getMessage());
+            throw new JwtTokenVerificationException(exception.getMessage());
         }
     }
 }

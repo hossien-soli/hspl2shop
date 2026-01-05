@@ -1,6 +1,6 @@
 package dev.hspl.hspl2shop.user.model.write.entity;
 
-import dev.hspl.hspl2shop.common.DomainUser;
+import dev.hspl.hspl2shop.common.ApplicationUser;
 import dev.hspl.hspl2shop.common.value.EmailAddress;
 import dev.hspl.hspl2shop.common.value.FullName;
 import dev.hspl.hspl2shop.common.value.PhoneNumber;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Getter
 @NullMarked
-public class User implements DomainUser {
+public class User implements ApplicationUser {
     private final UUID id;
 
     private FullName fullName;

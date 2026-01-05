@@ -1,6 +1,6 @@
 package dev.hspl.hspl2shop.user.service.write;
 
-import dev.hspl.hspl2shop.common.DomainUser;
+import dev.hspl.hspl2shop.common.ApplicationUser;
 import dev.hspl.hspl2shop.common.component.ApplicationUuidGenerator;
 import dev.hspl.hspl2shop.common.component.ApplicationAttributeProvider;
 import dev.hspl.hspl2shop.common.exception.AccountStateException;
@@ -28,7 +28,7 @@ public class AddressManagementService {
     private final UserAddressRepository addressRepository;
     private final ApplicationAttributeProvider attributeProvider;
 
-    public UUID registerNewAddress(DomainUser user, AddressInfoDto addressInfo) {
+    public UUID registerNewAddress(ApplicationUser user, AddressInfoDto addressInfo) {
         if (!user.isAccountActive()) {
             throw new AccountStateException(UserAction.REGISTER_NEW_ADDRESS);
         }
@@ -58,7 +58,7 @@ public class AddressManagementService {
     }
 
     public void editAddress(
-            DomainUser user, UUID addressId,
+            ApplicationUser user, UUID addressId,
             short clientSideVersion, AddressInfoDto addressInfo
     ) {
         if (!user.isAccountActive()) {
@@ -91,7 +91,7 @@ public class AddressManagementService {
         addressRepository.save(address);
     }
 
-    public void deleteAddress(DomainUser user, short clientSideVersion, UUID addressId) {
+    public void deleteAddress(ApplicationUser user, short clientSideVersion, UUID addressId) {
         if (!user.isAccountActive()) {
             throw new AccountStateException(UserAction.DELETE_ADDRESS);
         }

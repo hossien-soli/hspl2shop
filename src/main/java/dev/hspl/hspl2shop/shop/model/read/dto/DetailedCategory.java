@@ -16,8 +16,8 @@ public record DetailedCategory(
 
         ShortDescription shortDescription,
 
-        @Nullable
-    LongDescriptionReference longDescription, // detailed description
+//        @Nullable
+//    LongDescriptionReference longDescription, // detailed description
 
         @Nullable
     ImageReference primaryImage,

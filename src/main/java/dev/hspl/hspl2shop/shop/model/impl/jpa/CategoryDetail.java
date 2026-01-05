@@ -5,7 +5,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-@Entity(name = "CategoryDetail")
+//@Entity(name = "CategoryDetail")
 @Table(name = "category_detail")
 @AllArgsConstructor
 @NoArgsConstructor

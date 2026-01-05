@@ -5,7 +5,7 @@ import lombok.*;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-@Entity(name = "ProductVariant")
+//@Entity(name = "ProductVariant")
 @Table(name = "product_variants")
 @AllArgsConstructor
 @NoArgsConstructor

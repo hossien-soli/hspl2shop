@@ -3,6 +3,8 @@ package dev.hspl.hspl2shop.user.model.impl.jpa.entity;
 import dev.hspl.hspl2shop.user.value.PhoneVerificationPurpose;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -33,7 +35,8 @@ public class VerificationSessionJpaEntity {
     @Column(name = "request_client_id")
     private String requestClientIdentifier;
 
-    @Column(name = "purpose")
+    @Column(name = "purpose", columnDefinition = "VERIFICATION_PURPOSE")
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Enumerated(EnumType.STRING)
     private PhoneVerificationPurpose purpose;
 

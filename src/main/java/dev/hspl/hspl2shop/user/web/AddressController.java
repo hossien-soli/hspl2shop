@@ -1,6 +1,6 @@
 package dev.hspl.hspl2shop.user.web;
 
-import dev.hspl.hspl2shop.common.DomainUser;
+import dev.hspl.hspl2shop.common.ApplicationUser;
 import dev.hspl.hspl2shop.common.exception.UnsupportedAuthUserException;
 import dev.hspl.hspl2shop.user.model.read.dto.CityDto;
 import dev.hspl.hspl2shop.user.model.read.dto.UserAddressDto;
@@ -46,7 +46,7 @@ public class AddressController {
     @GetMapping("/address")
     @ResponseStatus(HttpStatus.OK)
     public List<UserAddressDto> fetchAllAddresses(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof DomainUser user) {
+        if (authentication.getPrincipal() instanceof ApplicationUser user) {
             return queryService.fetchAllUserAddresses(user);
         } else {
             throw new UnsupportedAuthUserException(authentication);
@@ -59,7 +59,7 @@ public class AddressController {
             Authentication authentication,
             @RequestBody @Valid AddressInfoDto payload
     ) {
-        if (authentication.getPrincipal() instanceof DomainUser user) {
+        if (authentication.getPrincipal() instanceof ApplicationUser user) {
             UUID newAddressId = managementService.registerNewAddress(user, payload);
             return Map.of("address_id", newAddressId.toString());
         } else {
@@ -75,7 +75,7 @@ public class AddressController {
             @RequestBody @Valid AddressInfoDto payload,
             @RequestHeader("X-Version") short clientSideVersion
     ) {
-        if (authentication.getPrincipal() instanceof DomainUser user) {
+        if (authentication.getPrincipal() instanceof ApplicationUser user) {
             managementService.editAddress(user, addressId, clientSideVersion, payload);
         } else {
             throw new UnsupportedAuthUserException(authentication);
@@ -89,7 +89,7 @@ public class AddressController {
             @PathVariable("addressId") UUID addressId,
             @RequestHeader("X-Version") short clientSideVersion
     ) {
-        if (authentication.getPrincipal() instanceof DomainUser user) {
+        if (authentication.getPrincipal() instanceof ApplicationUser user) {
             managementService.deleteAddress(user, clientSideVersion, addressId);
         } else {
             throw new UnsupportedAuthUserException(authentication);

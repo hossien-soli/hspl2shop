@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-@Entity(name = "Product")
+//@Entity(name = "Product")
 @Table(name = "products")
 @AllArgsConstructor
 @NoArgsConstructor

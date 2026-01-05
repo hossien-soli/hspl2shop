@@ -6,10 +6,10 @@ import org.jspecify.annotations.NullMarked;
 
 @Getter
 @NullMarked
-public class JWTTokenVerificationException extends ApplicationException {
+public class JwtTokenVerificationException extends ApplicationException {
     private final String actualMessage;
 
-    public JWTTokenVerificationException(String actualMessage) {
+    public JwtTokenVerificationException(String actualMessage) {
         super("failed to verify jwt token with actual message[%s]".formatted(actualMessage));
 
         this.actualMessage = actualMessage;

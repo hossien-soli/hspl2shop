@@ -72,6 +72,7 @@ public class AuthController {
             HttpServletRequest httpRequest,
             @RequestBody @Valid TokenRefreshDto payload
     ) {
+        // TODO: put delay between each token refresh
         return authService.tokenRefreshAttempt(
                 new RequestClientIdentifier(httpRequest.getRemoteAddr()),
                 payload

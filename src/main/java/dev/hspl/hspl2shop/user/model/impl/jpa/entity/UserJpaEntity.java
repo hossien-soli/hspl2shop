@@ -3,6 +3,8 @@ package dev.hspl.hspl2shop.user.model.impl.jpa.entity;
 import dev.hspl.hspl2shop.common.value.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -37,7 +39,8 @@ public class UserJpaEntity {
     @Nullable
     private String emailAddress;
 
-    @Column(name = "role")
+    @Column(name = "role", columnDefinition = "USER_ROLE")
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Enumerated(EnumType.STRING)
     private UserRole role;
 

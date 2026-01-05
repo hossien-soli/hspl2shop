@@ -3,6 +3,8 @@ package dev.hspl.hspl2shop.user.model.impl.jpa.entity;
 import dev.hspl.hspl2shop.user.value.LoginSessionState;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -28,7 +30,8 @@ public class LoginSessionJpaEntity {
     @Column(name = "refresh_count")
     private int numberOfTokenRefresh;
 
-    @Column(name = "state")
+    @Column(name = "state", columnDefinition = "LOGIN_SESSION_STATE")
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Enumerated(EnumType.STRING)
     private LoginSessionState state;
 

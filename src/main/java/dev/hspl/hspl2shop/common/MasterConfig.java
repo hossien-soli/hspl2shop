@@ -1,4 +1,4 @@
-package dev.hspl.hspl2shop.common.config;
+package dev.hspl.hspl2shop.common;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

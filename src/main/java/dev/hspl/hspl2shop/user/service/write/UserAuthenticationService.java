@@ -11,7 +11,7 @@ import dev.hspl.hspl2shop.common.value.PhoneNumber;
 import dev.hspl.hspl2shop.common.value.PlainVerificationCode;
 import dev.hspl.hspl2shop.common.value.UserRole;
 import dev.hspl.hspl2shop.notification.NotificationModuleApi;
-import dev.hspl.hspl2shop.user.component.DomainUserJWTService;
+import dev.hspl.hspl2shop.user.component.ApplicationUserJwtService;
 import dev.hspl.hspl2shop.user.component.PersistedValueProtector;
 import dev.hspl.hspl2shop.user.exception.*;
 import dev.hspl.hspl2shop.user.model.write.entity.LoginSession;
@@ -49,7 +49,7 @@ public class UserAuthenticationService {
     private final SecureRandom random;
     private final DomainEventPublisher eventPublisher;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final DomainUserJWTService jwtService;
+    private final ApplicationUserJwtService jwtService;
 
     public VerificationRequestResult requestCustomerPhoneVerification(
             RequestClientIdentifier requestClientIdentifier, RequestPhoneVerificationDto data
@@ -122,6 +122,8 @@ public class UserAuthenticationService {
             throw new PhoneAlreadyRegisteredException(session.getPhoneNumber(), false);
         }
 
+        session.markAsVerified();
+
         UUID newUserId = uuidGenerator.generateNew();
 
         User newUser = User.newUser(
@@ -159,8 +161,11 @@ public class UserAuthenticationService {
             throw new UserNotFoundException("password_reset_invalid_role");
         }
 
+        session.markAsVerified();
+
         user.updatePassword(persistedValueProtector.protect(userPassword), currentDateTime);
 
+        verificationSessionRepository.save(session);
         userRepository.save(user);
 
         // TODO: invalidate all login sessions of user

@@ -17,10 +17,10 @@ public interface UserAddressJpaRepository extends JpaRepository<UserAddressJpaEn
     @Query("""
             SELECT \
             new dev.hspl.hspl2shop.user.model.read.dto.\
-            UserAddressDto(ua.id, ua.deliveryFullName, ua.deliveryPhoneNumber, ua.secondaryPhoneNumber,\
-            p.id, c.id, p.name, c.name, ua.literalFullAddress, ua.postalCode, ua.locationLat, ua.locationLong,\
+            UserAddressDto(ua.id, ua.deliveryFullName, ua.deliveryPhoneNumber, ua.secondaryPhoneNumber, \
+            p.id, c.id, p.name, c.name, ua.literalFullAddress, ua.postalCode, ua.locationLat, ua.locationLong, \
             ua.createdAt, ua.updatedAt, ua.version) \
-            FROM UserAddress ua JOIN ua.city c JOIN c.province p WHERE ua.userId = :userId\
+            FROM UserAddress ua JOIN ua.city c JOIN c.province p WHERE ua.userId = :userId \
             ORDER BY ua.createdAt ASC""")
     List<UserAddressDto> findAllDtoByUserIdOrderByCreatedAtAsc(
             @Param("userId") UUID userId
