@@ -10,12 +10,11 @@ import org.jspecify.annotations.NullMarked;
 @Getter
 @NullMarked
 public class ProductForOrder {
-    private HumanReadableId id;
-    private short variantIndex;
+    private final HumanReadableId id;
+    private final short variantIndex;
 
-    private ProductName productName;
-
-    private String variantName;
+    private final String productName;
+    private final String variantName;
 
 
 }

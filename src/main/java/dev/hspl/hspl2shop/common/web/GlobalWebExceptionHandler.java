@@ -59,7 +59,7 @@ public class GlobalWebExceptionHandler {
         String problemKey = errors.isEmpty() ? null : errors.getFirst().getDefaultMessage();
         problemKey = problemKey != null ? problemKey : "contact_support_message";
 
-        String defaultMessage = "something went wrong!";
+        String defaultMessage = "data is not valid";
         String userFriendyMessage = messageSource.getMessage(
                 problemKey, null,
                 defaultMessage,

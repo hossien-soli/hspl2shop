@@ -1,4 +1,4 @@
-package dev.hspl.hspl2shop.shop.model.impl.jpa;
+package dev.hspl.hspl2shop.shop.model.impl.jpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
