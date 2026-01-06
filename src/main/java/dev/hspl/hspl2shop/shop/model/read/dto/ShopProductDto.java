@@ -3,8 +3,10 @@ package dev.hspl.hspl2shop.shop.model.read.dto;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+// product representation for customers and for the shop ui
+
 @NullMarked
-public record ProductDto(
+public record ShopProductDto(
         String id, // HumanReadableId
 
         String categoryId,
@@ -19,6 +21,6 @@ public record ProductDto(
         @Nullable
         String[] imageReferences,
 
-        boolean discountFlag
+        boolean discounted
 ) {
 }

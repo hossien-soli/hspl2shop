@@ -1,7 +1,7 @@
 package dev.hspl.hspl2shop.shop.service.read;
 
-import dev.hspl.hspl2shop.shop.model.read.dto.CategoryDetailDto;
-import dev.hspl.hspl2shop.shop.model.read.dto.CategoryDto;
+import dev.hspl.hspl2shop.shop.model.read.dto.ShopCategoryDetailDto;
+import dev.hspl.hspl2shop.shop.model.read.dto.ShopCategoryDto;
 import dev.hspl.hspl2shop.shop.model.read.repository.CategoryQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+// shop = customer facing ui for customer ordering/shopping interactions
+// customer required info and view of data in order to interact with website to order products
+
 @Service
 @Transactional(readOnly = true)
 @NullMarked
@@ -17,11 +20,11 @@ import java.util.List;
 public class ShopQueryService {
     private final CategoryQueryRepository categoryQueryRepository;
 
-    public List<CategoryDto> fetchAllCategories() {
-        return categoryQueryRepository.queryAll();
+    public List<ShopCategoryDto> fetchAllCategories() {
+        return categoryQueryRepository.queryAllShop();
     }
 
-    public List<CategoryDetailDto> fetchAllCategoryDetails() {
-        return categoryQueryRepository.queryAllDetail();
+    public List<ShopCategoryDetailDto> fetchAllCategoryDetails() {
+        return categoryQueryRepository.queryAllDetailShop();
     }
 }

@@ -1,1 +1,3 @@
-        // TODO: put delay between each token refresh
+TODO: put delay between each token refresh and login sessions
+TODO: 10 minute delay between each login session
+TODO: 5 minute delay between each token refresh

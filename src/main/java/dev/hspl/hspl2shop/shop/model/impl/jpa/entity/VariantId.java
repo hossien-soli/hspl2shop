@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.io.Serializable;
 
+// ProductVariantId
+
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,7 +15,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class ProductVariantId implements Serializable {
+public class VariantId implements Serializable {
     @Column(name = "product_id")
     private String productId;
 

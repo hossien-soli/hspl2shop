@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
 @Getter
 @Setter
 @NullMarked
-public class Category {
+public class CategoryJpaEntity {
     @Id
     @Column(name = "id")
     private String id; // human-readable-id

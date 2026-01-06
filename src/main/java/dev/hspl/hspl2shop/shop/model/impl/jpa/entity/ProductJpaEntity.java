@@ -7,8 +7,8 @@ import org.hibernate.type.SqlTypes;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity(name = "Product")
 @Table(name = "products")
@@ -18,19 +18,19 @@ import java.util.Set;
 @Getter
 @Setter
 @NullMarked
-public class Product {
+public class ProductJpaEntity {
     @Id
-    @Column(nullable = false)
+    @Column(name = "id")
     private String id; // HumanReadableId
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id")
-    private Category category;
+    private CategoryJpaEntity category;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "desc")
+    @Column(name = "description")
     private String shortDescription;
 
     @Column(name = "desc_ref")
@@ -42,12 +42,12 @@ public class Product {
     @Nullable
     private String[] imageReferences;
 
-    @Column(name = "discount")
-    private boolean discountFlag;
+    @Column(name = "discounted")
+    private boolean discounted;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @OrderBy("id.variantIndex DESC")
-    private List<ProductVariant> variants;
+    private List<VariantJpaEntity> variants;
 
     @Column(name = "visible")
     private boolean visible;
@@ -55,6 +55,13 @@ public class Product {
     @Column(name = "sort")
     @Nullable
     private Short sortingValue;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @Nullable
+    private LocalDateTime updatedAt; // information(also variants) updated by OWNER/ADMIN not customer orders stock changes
 
     @Column(name = "version")
     @Version

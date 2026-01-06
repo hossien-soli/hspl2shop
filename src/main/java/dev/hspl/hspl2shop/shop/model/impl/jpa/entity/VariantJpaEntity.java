@@ -5,7 +5,11 @@ import lombok.*;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-@Entity(name = "ProductVariant")
+import java.time.LocalDateTime;
+
+// ProductVariant
+
+@Entity(name = "Variant")
 @Table(name = "product_variants")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,33 +17,37 @@ import org.jspecify.annotations.Nullable;
 @Getter
 @Setter
 @NullMarked
-public class ProductVariant {
+public class VariantJpaEntity {
     @EmbeddedId
-    private ProductVariantId id;
+    private VariantId id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("productId")
-    private Product product;
+    private ProductJpaEntity product;
 
 //    @Column(name = "product_name")
 //    private String productName; // denormalizes from products table for better performance
 
-    @Column(name = "variant_name")
+    @Column(name = "name")
     private String variantName;
 
     @Column(name = "stock")
     private int stockItems;
 
     @Column(name = "price")
-    private int price;
+    private int price; // toman
 
     @Column(name = "discount")
     @Nullable
-    private Byte discountPercent;
+    private Short discountPercent; // 0-100
 
     @Column(name = "visible")
     private boolean visible;
 
+    @Column(name = "ordered_at")
+    @Nullable
+    private LocalDateTime lastOrderedAt;
+    
     @Column(name = "version")
     @Version
     @Nullable

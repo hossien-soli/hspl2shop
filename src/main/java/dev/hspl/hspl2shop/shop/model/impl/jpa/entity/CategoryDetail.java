@@ -1,6 +1,5 @@
 package dev.hspl.hspl2shop.shop.model.impl.jpa.entity;
 
-import dev.hspl.hspl2shop.shop.value.ShortDescription;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -8,10 +7,8 @@ import org.hibernate.type.SqlTypes;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-
 @Entity(name = "CategoryDetail")
-@Table(name = "category_detail")
+@Table(name = "category_details")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -20,13 +17,14 @@ import java.util.List;
 @NullMarked
 public class CategoryDetail {
     @Id
+    @Column(name = "id")
     private String id;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId
-    private Category category;
+    private CategoryJpaEntity category;
 
-    @Column(name = "desc")
+    @Column(name = "description")
     private String shortDescription;
 
     @Column(name = "desc_ref")

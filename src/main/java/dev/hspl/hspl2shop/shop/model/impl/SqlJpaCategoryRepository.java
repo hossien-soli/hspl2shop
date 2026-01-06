@@ -2,8 +2,8 @@ package dev.hspl.hspl2shop.shop.model.impl;
 
 import dev.hspl.hspl2shop.shop.model.impl.jpa.repository.CategoryDetailJpaRepository;
 import dev.hspl.hspl2shop.shop.model.impl.jpa.repository.CategoryJpaRepository;
-import dev.hspl.hspl2shop.shop.model.read.dto.CategoryDetailDto;
-import dev.hspl.hspl2shop.shop.model.read.dto.CategoryDto;
+import dev.hspl.hspl2shop.shop.model.read.dto.ShopCategoryDetailDto;
+import dev.hspl.hspl2shop.shop.model.read.dto.ShopCategoryDto;
 import dev.hspl.hspl2shop.shop.model.read.repository.CategoryQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
@@ -19,12 +19,12 @@ public class SqlJpaCategoryRepository implements CategoryQueryRepository {
     private final CategoryDetailJpaRepository detailJpaRepository;
 
     @Override
-    public List<CategoryDto> queryAll() {
-        return jpaRepository.findAllDto();
+    public List<ShopCategoryDto> queryAllShop() {
+        return jpaRepository.findAllShopDto();
     }
 
     @Override
-    public List<CategoryDetailDto> queryAllDetail() {
-        return detailJpaRepository.findAllDtoOrderBySortingValueAsc();
+    public List<ShopCategoryDetailDto> queryAllDetailShop() {
+        return detailJpaRepository.findAllShopDtoOrderBySortingValueAsc();
     }
 }

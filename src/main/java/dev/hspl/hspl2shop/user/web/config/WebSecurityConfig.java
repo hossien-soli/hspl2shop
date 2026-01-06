@@ -32,6 +32,8 @@ public class WebSecurityConfig {
 
                     requests.requestMatchers("/error").permitAll();
 
+                    requests.requestMatchers("/shop/**").permitAll();
+
                     requests.requestMatchers("/address/province").permitAll();
                     requests.requestMatchers("/address/province/*").permitAll();
                     requests.requestMatchers("/address/city").permitAll();

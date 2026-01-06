@@ -5,7 +5,7 @@ import dev.hspl.hspl2shop.shop.value.ProductName;
 import lombok.Getter;
 import org.jspecify.annotations.NullMarked;
 
-// domain required product info for creating and handling orders
+// domain required product info for creating and handling orders for customers
 
 @Getter
 @NullMarked
