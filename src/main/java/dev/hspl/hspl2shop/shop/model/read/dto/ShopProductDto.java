@@ -21,6 +21,8 @@ public record ShopProductDto(
         @Nullable
         String[] imageReferences,
 
-        boolean discounted
+        boolean discounted,
+
+        int price
 ) {
 }

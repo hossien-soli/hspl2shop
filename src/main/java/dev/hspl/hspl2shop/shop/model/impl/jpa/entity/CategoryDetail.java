@@ -7,6 +7,8 @@ import org.hibernate.type.SqlTypes;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.time.LocalDateTime;
+
 @Entity(name = "CategoryDetail")
 @Table(name = "category_details")
 @AllArgsConstructor
@@ -18,10 +20,11 @@ import org.jspecify.annotations.Nullable;
 public class CategoryDetail {
     @Id
     @Column(name = "id")
-    private String id;
+    private String id; // shared primary key with CategoryJpaEntity
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @MapsId
+    @JoinColumn(name = "id")
     private CategoryJpaEntity category;
 
     @Column(name = "description")
@@ -31,7 +34,7 @@ public class CategoryDetail {
     @Nullable
     private String longDescriptionReference;
 
-    @Column(name = "images", columnDefinition = "SHORT_STRING[]")
+    @Column(name = "images")
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Nullable
     private String[] imageReferences;
@@ -39,6 +42,13 @@ public class CategoryDetail {
     @Column(name = "sort")
     @Nullable
     private Short sortingValue;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @Nullable
+    private LocalDateTime updatedAt;
 
     @Column(name = "version")
     @Version

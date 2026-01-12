@@ -1,3 +1,14 @@
 TODO: put delay between each token refresh and login sessions
 TODO: 10 minute delay between each login session
 TODO: 5 minute delay between each token refresh
+
+TODO: create a single generic exception class for all value objects validations
+
+TODO: change jpaRepository save method to saveAndFlush carefully??!!!!!
+TODO: also change delete to deleteAndFlush!!
+TODO: OptimisticLockingFailureException in repositories may not be caught if using just save
+
+TODO: create notification system
+TODO: send notification to OWNER, MANAGER after successful order payment
+
+تاریخ فارسی!!!

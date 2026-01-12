@@ -32,7 +32,7 @@ public class VariantJpaEntity {
     private String variantName;
 
     @Column(name = "stock")
-    private int stockItems;
+    private short stockItems;
 
     @Column(name = "price")
     private int price; // toman

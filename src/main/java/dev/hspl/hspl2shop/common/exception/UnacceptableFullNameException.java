@@ -2,6 +2,8 @@ package dev.hspl.hspl2shop.common.exception;
 
 import lombok.Getter;
 
+// TODO: remove this exception and use generic global validation exception for all value objects validations
+
 @Getter
 public class UnacceptableFullNameException extends ApplicationException {
     private final String inputValue;

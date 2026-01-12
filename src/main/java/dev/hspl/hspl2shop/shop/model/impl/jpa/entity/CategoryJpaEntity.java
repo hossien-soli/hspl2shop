@@ -1,9 +1,15 @@
 package dev.hspl.hspl2shop.shop.model.impl.jpa.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
+
+// don't call spring-repository save method on this entity
+// use CategoryDetail and cascade types for managing this entity
+// this entity is managed via the CategoryDetail JPA entity
 
 @Entity(name = "Category")
 @Table(name = "categories")
@@ -21,8 +27,8 @@ public class CategoryJpaEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "version")
-    @Version
-    @Nullable
-    private Short version;
+//    @Column(name = "version")
+//    @Version
+//    @Nullable
+//    private Short version;
 }

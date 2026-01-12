@@ -1,9 +1,0 @@
-package dev.hspl.hspl2shop.common.value;
-
-import java.util.List;
-
-public record PageResult<T>(
-
-        List<T> items
-) {
-}

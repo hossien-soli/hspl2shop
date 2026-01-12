@@ -36,7 +36,7 @@ public class StockChangeJpaEntity {
     private boolean increased; // false=decreased
 
     @Column(name = "stock")
-    private int stockItems; // variant stock items before change
+    private short stockItems; // variant stock items before change
 
     @Column(name = "count")
     private short count;

@@ -42,7 +42,7 @@ public class WebSecurityConfig {
                 })
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .anonymous(AbstractHttpConfigurer::disable)
+                //.anonymous(AbstractHttpConfigurer::disable)
                 .exceptionHandling(handling -> {
                     handling.authenticationEntryPoint(
                             new MainAuthenticationEntryPoint(objectMapper, messageSource)

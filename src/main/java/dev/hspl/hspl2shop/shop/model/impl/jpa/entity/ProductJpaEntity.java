@@ -37,7 +37,7 @@ public class ProductJpaEntity {
     @Nullable
     private String longDescriptionReference;
 
-    @Column(name = "images", columnDefinition = "SHORT_STRING[]")
+    @Column(name = "images")
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Nullable
     private String[] imageReferences;
@@ -45,12 +45,20 @@ public class ProductJpaEntity {
     @Column(name = "discounted")
     private boolean discounted;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @OrderBy("id.variantIndex DESC")
-    private List<VariantJpaEntity> variants;
+    @Column(name = "price_index")
+    @Nullable
+    private Short priceVariantIndex;
+
+    @Column(name = "price")
+    @Nullable
+    private Integer price;
 
     @Column(name = "visible")
     private boolean visible;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
+    //@OrderBy("id.variantIndex ASC")
+    private List<VariantJpaEntity> variants;
 
     @Column(name = "sort")
     @Nullable
@@ -61,7 +69,7 @@ public class ProductJpaEntity {
 
     @Column(name = "updated_at")
     @Nullable
-    private LocalDateTime updatedAt; // information(also variants) updated by OWNER/ADMIN not customer orders stock changes
+    private LocalDateTime updatedAt;
 
     @Column(name = "version")
     @Version

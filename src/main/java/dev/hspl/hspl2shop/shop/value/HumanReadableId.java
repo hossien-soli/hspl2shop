@@ -11,6 +11,10 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public record HumanReadableId(String value) {
     public HumanReadableId {
-        // TODO: add validation throw exception
+        // TODO: length should be less than or equals to 20 & greater than or equals to 5
+        // TODO: consider a small max chars for length(database storage efficiency)
+        // TODO: also validate that only contains english-letters, numbers, and -
+        //  (no space, no special chars, no persian chars)
+        // TODO: value should be always lower-case
     }
 }

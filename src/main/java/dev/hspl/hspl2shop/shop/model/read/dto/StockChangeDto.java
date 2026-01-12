@@ -20,7 +20,7 @@ public record StockChangeDto(
         String variantName, // ProductName
 
         boolean increased,
-        int stockItems, // variant stock items before change
+        short stockItems, // variant stock items before change
         short count,
         String description,
 

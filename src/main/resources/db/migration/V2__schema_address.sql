@@ -1,7 +1,7 @@
 CREATE TABLE provinces
 (
     id   SMALLINT     NOT NULL,
-    name SHORT_STRING NOT NULL,
+    name VARCHAR(255) NOT NULL,
     CONSTRAINT pk_provinces PRIMARY KEY (id)
 );
 
@@ -9,7 +9,7 @@ CREATE TABLE cities
 (
     id          SMALLINT     NOT NULL,
     province_id SMALLINT     NOT NULL,
-    name        SHORT_STRING NOT NULL,
+    name        VARCHAR(255) NOT NULL,
     CONSTRAINT pk_cities PRIMARY KEY (id)
 );
 
@@ -21,12 +21,12 @@ CREATE TABLE user_addresses
 (
     id          UUID             NOT NULL,
     user_id     UUID             NOT NULL,
-    name        SHORT_STRING     NOT NULL,
-    phone1      SHORT_STRING     NOT NULL,
-    phone2      SHORT_STRING     NULL,
+    name        VARCHAR(255)     NOT NULL,
+    phone1      VARCHAR(255)     NOT NULL,
+    phone2      VARCHAR(255)     NULL,
     city_id     SMALLINT         NOT NULL,
-    address     LONG_STRING      NOT NULL,
-    postal_code SHORT_STRING     NOT NULL,
+    address     TEXT             NOT NULL,
+    postal_code VARCHAR(255)     NOT NULL,
     llat        DOUBLE PRECISION NULL,
     llong       DOUBLE PRECISION NULL,
     created_at  TIMESTAMP        NOT NULL,

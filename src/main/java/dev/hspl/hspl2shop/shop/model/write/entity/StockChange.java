@@ -23,7 +23,7 @@ public class StockChange {
 
     private final boolean increased; // false=decreased
 
-    private final int stockItems; // variant stock items before change
+    private final short stockItems; // variant stock items before change
 
     private final short count; // min:1
 
@@ -36,7 +36,7 @@ public class StockChange {
 
     private StockChange(
             UUID id, HumanReadableId productId, short variantIndex,
-            @Nullable UUID relatedUserId, boolean increased, int stockItems, short count,
+            @Nullable UUID relatedUserId, boolean increased, short stockItems, short count,
             String description, LocalDateTime createdAt, @Nullable Short version
     ) {
         this.id = id;
@@ -56,7 +56,7 @@ public class StockChange {
 
     public static StockChange newChange(
             UUID newChangeId, HumanReadableId productId, short variantIndex,
-            @Nullable UUID relatedUserId, boolean increased, int stockItems, short count,
+            @Nullable UUID relatedUserId, boolean increased, short stockItems, short count,
             String description, LocalDateTime currentDateTime
     ) {
         return new StockChange(newChangeId, productId, variantIndex, relatedUserId, increased,
@@ -65,7 +65,7 @@ public class StockChange {
 
     public static StockChange existingChange(
             UUID id, HumanReadableId productId, short variantIndex,
-            @Nullable UUID relatedUserId, boolean increased, int stockItems, short count,
+            @Nullable UUID relatedUserId, boolean increased, short stockItems, short count,
             String description, LocalDateTime createdAt, @Nullable Short version
     ) {
         return new StockChange(id, productId, variantIndex, relatedUserId, increased,
