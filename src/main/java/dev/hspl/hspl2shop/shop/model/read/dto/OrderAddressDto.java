@@ -1,27 +1,37 @@
-package dev.hspl.hspl2shop.user.model.read.dto;
+package dev.hspl.hspl2shop.shop.model.read.dto;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @NullMarked
-public record UserAddressDto(
+public record OrderAddressDto(
         UUID id,
+
         String deliveryFullName,
+
         String deliveryPhoneNumber,
-        @Nullable String secondaryPhoneNumber,
+
+        @Nullable
+        String secondaryPhoneNumber,
+
         short provinceId,
-        short cityId,
         String provinceName,
+
+        short cityId,
         String cityName,
+
         String literalFullAddress,
+
         String postalCode,
-        @Nullable Double locationLat,
-        @Nullable Double locationLong,
-        LocalDateTime createdAt,
-        @Nullable LocalDateTime updatedAt,
+
+        @Nullable
+        Double locationLat,
+
+        @Nullable
+        Double locationLong,
+
         short version
 ) {
 }

@@ -5,7 +5,7 @@ import dev.hspl.hspl2shop.user.exception.InvalidProvinceIdException;
 import dev.hspl.hspl2shop.user.model.read.dto.ProvinceCityDto;
 import dev.hspl.hspl2shop.user.model.read.dto.CityDto;
 import dev.hspl.hspl2shop.user.model.read.dto.ProvinceDto;
-import dev.hspl.hspl2shop.user.model.read.dto.UserAddressDto;
+import dev.hspl.hspl2shop.common.model.UserAddressDto;
 import dev.hspl.hspl2shop.user.model.read.repository.ProvinceCityQueryRepository;
 import dev.hspl.hspl2shop.user.model.read.repository.UserAddressQueryRepository;
 import lombok.RequiredArgsConstructor;

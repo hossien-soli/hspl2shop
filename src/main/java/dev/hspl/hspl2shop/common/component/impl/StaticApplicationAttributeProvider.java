@@ -44,4 +44,44 @@ public class StaticApplicationAttributeProvider implements ApplicationAttributeP
     public short opaqueTokenRandomBytesCount() {
         return 25;
     }
+
+    @Override
+    public short orderMaxItems() {
+        return 30;
+    }
+
+    @Override
+    public short orderProductVariantMaxItems() {
+        return 5;
+    }
+
+    @Override
+    public short orderMaxWeightKG() {
+        return 80;
+    }
+
+    @Override
+    public long orderMaxPrice() {
+        return 500_000_000L;
+    }
+
+    @Override
+    public short orderLifetimeMinutes() {
+        return 60;
+    }
+
+    @Override
+    public String paymentGatewayCallbackUrl() {
+        return "google.com";
+    }
+
+    @Override
+    public short orderProductCheckDelaySeconds() {
+        return 5 * 60;
+    }
+
+    @Override
+    public short delayLimitBetweenPaymentSessions() {
+        return 60; // seconds
+    }
 }

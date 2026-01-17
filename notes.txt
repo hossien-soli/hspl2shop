@@ -12,3 +12,12 @@ TODO: create notification system
 TODO: send notification to OWNER, MANAGER after successful order payment
 
 تاریخ فارسی!!!
+
+        // TODO: add delay between each order registration for user
+    // TODO: add these static values to config file(application.properties)
+
+        // TODO: find last user payment session and set delay between payment sessions
+        // TODO: also invisible their!!!!! variants!!!!
+
+دکمه ایجاد سبد خرید جدید از روی سفارشات قبلی لازمه
+البته توی فرانت باید پیاده سازی بشه

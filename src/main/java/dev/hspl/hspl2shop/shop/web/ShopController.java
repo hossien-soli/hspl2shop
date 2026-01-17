@@ -2,10 +2,7 @@ package dev.hspl.hspl2shop.shop.web;
 
 import dev.hspl.hspl2shop.common.value.PaginationParams;
 import dev.hspl.hspl2shop.common.value.PaginationResult;
-import dev.hspl.hspl2shop.shop.model.read.dto.ShopCategoryDetailDto;
-import dev.hspl.hspl2shop.shop.model.read.dto.ShopCategoryDto;
-import dev.hspl.hspl2shop.shop.model.read.dto.ShopProductDto;
-import dev.hspl.hspl2shop.shop.model.read.dto.ShopVariantDto;
+import dev.hspl.hspl2shop.shop.model.read.dto.*;
 import dev.hspl.hspl2shop.shop.service.read.ShopQueryService;
 import dev.hspl.hspl2shop.shop.value.HumanReadableId;
 import lombok.RequiredArgsConstructor;
@@ -80,5 +77,11 @@ public class ShopController {
             @RequestParam("idList") List<String> idList
     ) {
         return queryService.fetchProductsByIdList(idList.stream().map(HumanReadableId::new).toList());
+    }
+
+    @GetMapping("/shop/delivery-methods")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ShopDeliveryMethodDto> fetchAllDeliveryMethods() {
+        return queryService.fetchAllDeliveryMethods();
     }
 }

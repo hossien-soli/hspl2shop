@@ -4,6 +4,7 @@ import dev.hspl.hspl2shop.common.exception.EntityVersionMismatchException;
 import dev.hspl.hspl2shop.shop.model.write.entity.StockChange;
 import org.jspecify.annotations.NullMarked;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,4 +13,6 @@ public interface StockChangeRepository {
     Optional<StockChange> find(UUID id);
 
     void save(StockChange change) throws EntityVersionMismatchException;
+
+    void saveAll(List<StockChange> changes) throws EntityVersionMismatchException;
 }

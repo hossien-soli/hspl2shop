@@ -31,7 +31,7 @@ CREATE TABLE user_addresses
     llong       DOUBLE PRECISION NULL,
     created_at  TIMESTAMP        NOT NULL,
     updated_at  TIMESTAMP        NULL,
-    version     SMALLINT         NULL,
+    version     SMALLINT         NOT NULL,
     CONSTRAINT pk_user_addresses PRIMARY KEY (id)
 );
 

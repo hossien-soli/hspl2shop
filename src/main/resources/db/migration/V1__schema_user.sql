@@ -15,7 +15,7 @@ CREATE TABLE users
     created_at    TIMESTAMP    NOT NULL,
     updated_at    TIMESTAMP    NULL,
     token_refresh TIMESTAMP    NULL,
-    version       SMALLINT     NULL,
+    version       SMALLINT     NOT NULL,
     CONSTRAINT pk_users PRIMARY KEY (id)
 );
 
@@ -33,7 +33,7 @@ CREATE TABLE verification_sessions
     purpose           VERIFICATION_PURPOSE NOT NULL,
     verified          BOOLEAN              NOT NULL,
     created_at        TIMESTAMP            NOT NULL,
-    version           SMALLINT             NULL,
+    version           SMALLINT             NOT NULL,
     CONSTRAINT pk_verification_sessions PRIMARY KEY (id)
 );
 
@@ -53,7 +53,7 @@ CREATE TABLE login_sessions
     request_client_id VARCHAR(255)        NOT NULL,
     created_at        TIMESTAMP           NOT NULL,
     state_updated_at  TIMESTAMP           NULL,
-    version           INT                 NULL,
+    version           INT                 NOT NULL,
     CONSTRAINT pk_login_sessions PRIMARY KEY (id)
 );
 
@@ -70,7 +70,7 @@ CREATE TABLE refresh_tokens
     refreshed    BOOLEAN      NOT NULL,
     created_at   TIMESTAMP    NOT NULL,
     refreshed_at TIMESTAMP    NULL,
-    version      SMALLINT     NULL,
+    version      SMALLINT     NOT NULL,
     CONSTRAINT pk_refresh_tokens PRIMARY KEY (id)
 );
 

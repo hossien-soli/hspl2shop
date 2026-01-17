@@ -3,7 +3,7 @@ package dev.hspl.hspl2shop.user.web;
 import dev.hspl.hspl2shop.common.ApplicationUser;
 import dev.hspl.hspl2shop.common.exception.UnsupportedAuthUserException;
 import dev.hspl.hspl2shop.user.model.read.dto.CityDto;
-import dev.hspl.hspl2shop.user.model.read.dto.UserAddressDto;
+import dev.hspl.hspl2shop.common.model.UserAddressDto;
 import dev.hspl.hspl2shop.user.model.read.dto.ProvinceCityDto;
 import dev.hspl.hspl2shop.user.model.read.dto.ProvinceDto;
 import dev.hspl.hspl2shop.user.service.dto.AddressInfoDto;

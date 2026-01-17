@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 // ProductVariant
 // this entity can only be managed by OWNER
 // administration representation of Variant entity in system
+// Variant Admin Management Entity
 
 // variant should have a dedicated endpoint for manual stock updates
 
@@ -30,17 +31,19 @@ public class Variant {
     @Nullable
     private Short discountPercent; // 0-100
 
+    private int weight; // unit: g - 1000g
+
     private boolean visible;
 
     @Nullable
-    private final LocalDateTime lastOrderedAt;
+    private final LocalDateTime lastOrderedAt; // fill after payment_verification
 
     @Nullable
     private final Short version;
 
     private Variant(
             short variantIndex, VariantName variantName, short stockItems, int price,
-            @Nullable Short discountPercent, boolean visible, @Nullable LocalDateTime lastOrderedAt,
+            @Nullable Short discountPercent, int weight, boolean visible, @Nullable LocalDateTime lastOrderedAt,
             @Nullable Short version
     ) {
         this.variantIndex = variantIndex;
@@ -48,32 +51,36 @@ public class Variant {
         this.stockItems = stockItems;
         this.price = price;
         this.discountPercent = discountPercent;
+        this.weight = weight;
         this.visible = visible;
         this.lastOrderedAt = lastOrderedAt;
         this.version = version;
     }
 
     public static Variant newVariant(
-            short newVariantIndex, VariantName variantName, int price, @Nullable Short discountPercent
+            short newVariantIndex, VariantName variantName, int price,
+            @Nullable Short discountPercent, int weight
     ) {
-        return new Variant(newVariantIndex, variantName, (short) 0, price, discountPercent, false, null, null);
+        return new Variant(newVariantIndex, variantName, (short) 0, price, discountPercent, weight, false, null, null);
     }
 
     public static Variant existingVariant(
             short variantIndex, VariantName variantName, short stockItems, int price,
-            @Nullable Short discountPercent, boolean visible, @Nullable LocalDateTime lastOrderedAt,
+            @Nullable Short discountPercent, int weight, boolean visible, @Nullable LocalDateTime lastOrderedAt,
             @Nullable Short version
     ) {
         return new Variant(variantIndex, variantName, stockItems, price, discountPercent,
-                visible, lastOrderedAt, version);
+                weight, visible, lastOrderedAt, version);
     }
 
     public void editVariant(
-            VariantName newVariantName, int newPrice, @Nullable Short newDiscountPercent
+            VariantName newVariantName, int newPrice, @Nullable Short newDiscountPercent,
+            int newWeight
     ) {
         this.variantName = newVariantName;
         this.price = newPrice;
         this.discountPercent = newDiscountPercent;
+        this.weight = newWeight;
     }
 
     public void markAsVisible() {

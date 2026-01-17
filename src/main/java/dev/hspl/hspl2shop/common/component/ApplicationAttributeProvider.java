@@ -21,4 +21,20 @@ public interface ApplicationAttributeProvider {
     short accessTokenLifetimeMinutes(); // min:10(because of delay)
 
     short opaqueTokenRandomBytesCount();
+
+    short orderMaxItems(); // max item a single order can have
+
+    short orderProductVariantMaxItems(); // max item of a single variant in order
+
+    short orderMaxWeightKG(); // max weight a single order can have
+
+    long orderMaxPrice(); // max price a single order can have / toman
+
+    short orderLifetimeMinutes();
+
+    String paymentGatewayCallbackUrl();
+
+    short orderProductCheckDelaySeconds();
+
+    short delayLimitBetweenPaymentSessions(); // seconds / delay for each user
 }

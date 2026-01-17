@@ -5,7 +5,7 @@ import dev.hspl.hspl2shop.common.value.*;
 import dev.hspl.hspl2shop.user.model.impl.jpa.entity.UserAddressJpaEntity;
 import dev.hspl.hspl2shop.user.model.impl.jpa.repository.CityJpaRepository;
 import dev.hspl.hspl2shop.user.model.impl.jpa.repository.UserAddressJpaRepository;
-import dev.hspl.hspl2shop.user.model.read.dto.UserAddressDto;
+import dev.hspl.hspl2shop.common.model.UserAddressDto;
 import dev.hspl.hspl2shop.user.model.read.repository.UserAddressQueryRepository;
 import dev.hspl.hspl2shop.user.model.write.entity.UserAddress;
 import dev.hspl.hspl2shop.user.model.write.repository.UserAddressRepository;
@@ -91,6 +91,11 @@ public class SqlJpaUserAddressRepository implements UserAddressRepository, UserA
         } catch (OptimisticLockingFailureException exception) {
             throw new EntityVersionMismatchException(UserAddress.class.getSimpleName(), address.getId().toString());
         }
+    }
+
+    @Override
+    public Optional<UserAddressDto> queryById(UUID userId, UUID addressId) {
+        return jpaRepository.findDtoByUserIdAndId(userId, addressId);
     }
 
     @Override

@@ -15,6 +15,8 @@ import java.util.Set;
 
 // this entity can only be managed by OWNER
 // administration representation of Product entity in system
+// Product Admin Management Entity
+// موقع خرید کاربر توی بیزینس لاجیک ما به یک سری از این اطلاعات نیاز نداریم برای همین اونارو جدا میکنیم توی یک انتیتی دیگه
 
 @Getter
 @NullMarked
@@ -135,8 +137,8 @@ public class Product {
     }
 
     public void addNewVariant(
-            short variantIndex, VariantName variantName, int variantPrice, @Nullable Short discountPercent,
-            LocalDateTime currentDateTime
+            short variantIndex, VariantName variantName, int variantPrice,
+            @Nullable Short discountPercent, int weight, LocalDateTime currentDateTime
     ) {
         if (discountPercent != null) {
             validateDiscountPercent(discountPercent);
@@ -149,7 +151,7 @@ public class Product {
         Map<Short, Variant> newVariants = new HashMap<>(this.variants);
 
         newVariants.put(variantIndex, Variant.newVariant(
-                variantIndex, variantName, variantPrice, discountPercent
+                variantIndex, variantName, variantPrice, discountPercent, weight
         ));
 
         this.variants = Collections.unmodifiableMap(newVariants);
@@ -159,7 +161,7 @@ public class Product {
     public void editVariant(
             short variantIndex, VariantName newVariantName,
             int newVariantPrice, @Nullable Short newDiscountPercent,
-            LocalDateTime currentDateTime
+            int newWeight, LocalDateTime currentDateTime
     ) {
         if (newDiscountPercent != null) {
             validateDiscountPercent(newDiscountPercent);
@@ -173,7 +175,9 @@ public class Product {
             this.price = newVariantPrice;
         }
 
-        this.variants.get(variantIndex).editVariant(newVariantName, newVariantPrice, newDiscountPercent);
+        this.variants.get(variantIndex).editVariant(newVariantName, newVariantPrice,
+                newDiscountPercent, newWeight);
+
         this.updatedAt = currentDateTime;
 
         checkForVariantDiscount();
@@ -289,5 +293,12 @@ public class Product {
     public void markProductAsInvisible(LocalDateTime currentDateTime) {
         this.visible = false;
         this.updatedAt = currentDateTime;
+
+        this.priceVariantIndex = null;
+        this.price = null;
+
+        this.variants.values().forEach(Variant::markAsInvisible);
+
+        checkForVariantDiscount();
     }
 }

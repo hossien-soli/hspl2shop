@@ -12,8 +12,8 @@ import dev.hspl.hspl2shop.shop.model.read.dto.ShopProductDto;
 import dev.hspl.hspl2shop.shop.model.read.dto.ShopVariantDto;
 import dev.hspl.hspl2shop.shop.model.read.repository.ProductQueryRepository;
 import dev.hspl.hspl2shop.shop.model.write.entity.Product;
+import dev.hspl.hspl2shop.shop.model.write.entity.ProductForOrder;
 import dev.hspl.hspl2shop.shop.model.write.entity.Variant;
-import dev.hspl.hspl2shop.shop.model.write.repository.ProductForOrderRepository;
 import dev.hspl.hspl2shop.shop.model.write.repository.ProductRepository;
 import dev.hspl.hspl2shop.shop.value.*;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 @NullMarked
-public class SqlJpaProductRepository implements ProductRepository, ProductQueryRepository, ProductForOrderRepository {
+public class SqlJpaProductRepository implements ProductRepository, ProductQueryRepository {
     private final ProductJpaRepository jpaRepository;
     private final VariantJpaRepository variantJpaRepository;
     private final CategoryJpaRepository categoryJpaRepository;
@@ -51,7 +51,7 @@ public class SqlJpaProductRepository implements ProductRepository, ProductQueryR
         Map<Short, Variant> variants = product.getVariants().stream().map(variant -> Variant.existingVariant(
                 variant.getId().getVariantIndex(), new VariantName(variant.getVariantName()),
                 variant.getStockItems(), variant.getPrice(), variant.getDiscountPercent(),
-                variant.isVisible(), variant.getLastOrderedAt(), variant.getVersion()
+                variant.getWeight(), variant.isVisible(), variant.getLastOrderedAt(), variant.getVersion()
         )).collect(Collectors.toMap(Variant::getVariantIndex, variant -> variant));
 
         return Optional.of(Product.existingProduct(
@@ -98,10 +98,12 @@ public class SqlJpaProductRepository implements ProductRepository, ProductQueryR
                 VariantJpaEntity variantJpaEntity = VariantJpaEntity.builder()
                         .id(new VariantId(product.getId().value(), variant.getVariantIndex()))
                         .product(productJpaEntity)
+                        .productName(product.getName().value())
                         .variantName(variant.getVariantName().value())
                         .stockItems(variant.getStockItems())
                         .price(variant.getPrice())
                         .discountPercent(variant.getDiscountPercent())
+                        .weight(variant.getWeight())
                         .visible(variant.isVisible())
                         .lastOrderedAt(variant.getLastOrderedAt())
                         .version(variant.getVersion())
@@ -165,5 +167,59 @@ public class SqlJpaProductRepository implements ProductRepository, ProductQueryR
     @Override
     public List<ShopVariantDto> queryProductVariants(HumanReadableId productId) {
         return variantJpaRepository.findAllDtoForShopByProductId(productId.value());
+    }
+
+    @Override
+    public List<ProductForOrder> findAllForOrderByIds(Set<ProductVariantId> ids) {
+        List<VariantId> jpaIds = ids.stream()
+                .map(id -> VariantId.builder().productId(id.productId().value())
+                        .variantIndex(id.variantIndex()).build()).toList();
+
+        return variantJpaRepository.findAllById(jpaIds).stream()
+                .map(jpaEntity -> ProductForOrder.existingProduct(
+                        new ProductVariantId(
+                                new HumanReadableId(jpaEntity.getId().getProductId()),
+                                jpaEntity.getId().getVariantIndex()
+                        ),
+                        new ProductName(jpaEntity.getProductName()),
+                        new VariantName(jpaEntity.getVariantName()),
+                        jpaEntity.getStockItems(),
+                        jpaEntity.getPrice(),
+                        jpaEntity.getDiscountPercent(),
+                        jpaEntity.getWeight(),
+                        jpaEntity.isVisible(),
+                        jpaEntity.getLastOrderedAt(),
+                        jpaEntity.getVersion()
+                )).toList();
+    }
+
+    @Override
+    public void saveAllForOrder(List<ProductForOrder> products) throws EntityVersionMismatchException {
+        for (ProductForOrder product : products) {
+            try {
+                VariantId variantId = VariantId.builder()
+                        .productId(product.getId().productId().value())
+                        .variantIndex(product.getId().variantIndex())
+                        .build();
+
+                VariantJpaEntity jpaEntity = VariantJpaEntity.builder()
+                        .id(variantId)
+                        .product(jpaRepository.getReferenceById(product.getId().productId().value()))
+                        .productName(product.getProductName().value())
+                        .variantName(product.getVariantName().value())
+                        .stockItems(product.getStockItems())
+                        .price(product.getPrice())
+                        .discountPercent(product.getDiscountPercent())
+                        .weight(product.getWeight())
+                        .visible(product.isVisible())
+                        .lastOrderedAt(product.getLastOrderedAt())
+                        .version(product.getVersion())
+                        .build();
+
+                variantJpaRepository.saveAndFlush(jpaEntity);
+            } catch (OptimisticLockingFailureException exception) {
+                throw new EntityVersionMismatchException(ProductForOrder.class.getSimpleName(), product.getId().toString());
+            }
+        }
     }
 }

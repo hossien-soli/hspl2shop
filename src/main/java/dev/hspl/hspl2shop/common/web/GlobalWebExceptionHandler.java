@@ -1,6 +1,7 @@
 package dev.hspl.hspl2shop.common.web;
 
 import dev.hspl.hspl2shop.common.exception.ApplicationException;
+import dev.hspl.hspl2shop.shop.exception.order.PaymentSessionLimitationException;
 import dev.hspl.hspl2shop.user.exception.PhoneVerificationLimitationException;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
@@ -32,6 +33,14 @@ public class GlobalWebExceptionHandler {
         Map<String, Object> extraData = null;
 
         if (exception instanceof PhoneVerificationLimitationException richException) {
+            args = new Object[]{richException.getSecondsDelayBetweenSessions() - richException.getSecondsElapsed()};
+            extraData = Map.of(
+                    "delayLimitBetweenSessions", richException.getSecondsDelayBetweenSessions(),
+                    "secondsToNextSession", richException.getSecondsDelayBetweenSessions() - richException.getSecondsElapsed()
+            );
+        }
+
+        if (exception instanceof PaymentSessionLimitationException richException) {
             args = new Object[]{richException.getSecondsDelayBetweenSessions() - richException.getSecondsElapsed()};
             extraData = Map.of(
                     "delayLimitBetweenSessions", richException.getSecondsDelayBetweenSessions(),

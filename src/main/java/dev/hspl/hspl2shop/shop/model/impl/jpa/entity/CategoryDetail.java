@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class CategoryDetail {
     @Id
     @Column(name = "id")
-    private String id; // shared primary key with CategoryJpaEntity
+    private String id; // shared PRIMARY KEY with CategoryJpaEntity
 
     @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @MapsId

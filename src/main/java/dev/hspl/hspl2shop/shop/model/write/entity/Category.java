@@ -14,6 +14,7 @@ import java.util.Set;
 // full category
 // this entity can only be managed by OWNER
 // administration representation of Category entity in system
+// Category Admin Management Entity
 
 @Getter
 @NullMarked

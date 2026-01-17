@@ -9,7 +9,7 @@ CREATE TABLE category_details
     sort        SMALLINT       NULL,
     created_at  TIMESTAMP      NOT NULL,
     updated_at  TIMESTAMP      NULL,
-    version     SMALLINT       NULL,
+    version     SMALLINT       NOT NULL,
     CONSTRAINT pk_category_details PRIMARY KEY (id)
 );
 
@@ -20,9 +20,9 @@ CREATE TABLE categories
     CONSTRAINT pk_categories PRIMARY KEY (id)
 );
 
--- ALTER TABLE categories
---     ADD CONSTRAINT fk_categories_on_category_details FOREIGN KEY (id) REFERENCES category_details (id)
---         ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE categories
+    ADD CONSTRAINT fk_categories_on_category_details FOREIGN KEY (id) REFERENCES category_details (id)
+        ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- category_details is the main table and the owner of relationship with categories table
 -- ALTER TABLE category_details
@@ -44,7 +44,7 @@ CREATE TABLE products
     sort        SMALLINT       NULL,
     created_at  TIMESTAMP      NOT NULL,
     updated_at  TIMESTAMP      NULL,
-    version     SMALLINT       NULL,
+    version     SMALLINT       NOT NULL,
     CONSTRAINT pk_products PRIMARY KEY (id)
 );
 
@@ -54,15 +54,17 @@ ALTER TABLE products
 
 CREATE TABLE product_variants
 (
-    product_id VARCHAR(255) NOT NULL,
-    index      SMALLINT     NOT NULL,
-    name       VARCHAR(255) NOT NULL,
-    stock      SMALLINT     NOT NULL,
-    price      INT          NOT NULL,
-    discount   SMALLINT     NULL,
-    visible    BOOLEAN      NOT NULL,
-    ordered_at TIMESTAMP    NULL,
-    version    SMALLINT     NULL,
+    product_id   VARCHAR(255) NOT NULL,
+    index        SMALLINT     NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
+    variant_name VARCHAR(255) NOT NULL,
+    stock        SMALLINT     NOT NULL,
+    price        INT          NOT NULL,
+    discount     SMALLINT     NULL,
+    weight       INT          NOT NULL,
+    visible      BOOLEAN      NOT NULL,
+    ordered_at   TIMESTAMP    NULL,
+    version      SMALLINT     NOT NULL,
     CONSTRAINT pk_product_variants PRIMARY KEY (product_id, index)
 );
 
@@ -81,7 +83,7 @@ CREATE TABLE stock_changes
     count         SMALLINT     NOT NULL,
     description   VARCHAR(255) NOT NULL,
     created_at    TIMESTAMP    NOT NULL,
-    version       SMALLINT     NULL,
+    version       SMALLINT     NOT NULL,
     CONSTRAINT pk_stock_changes PRIMARY KEY (id)
 );
 
@@ -91,5 +93,4 @@ ALTER TABLE stock_changes
 
 ALTER TABLE stock_changes
     ADD CONSTRAINT fk_stock_changes_on_product_variants FOREIGN KEY (product_id, variant_index)
-        REFERENCES product_variants (product_id, index)
-        ON DELETE CASCADE ON UPDATE CASCADE;
+        REFERENCES product_variants (product_id, index) ON DELETE CASCADE ON UPDATE CASCADE;

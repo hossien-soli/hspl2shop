@@ -1,13 +1,10 @@
 package dev.hspl.hspl2shop.shop.service.read;
 
-import dev.hspl.hspl2shop.common.exception.UnacceptablePaginationParamsException;
 import dev.hspl.hspl2shop.common.value.PaginationParams;
 import dev.hspl.hspl2shop.common.value.PaginationResult;
-import dev.hspl.hspl2shop.shop.model.read.dto.ShopCategoryDetailDto;
-import dev.hspl.hspl2shop.shop.model.read.dto.ShopCategoryDto;
-import dev.hspl.hspl2shop.shop.model.read.dto.ShopProductDto;
-import dev.hspl.hspl2shop.shop.model.read.dto.ShopVariantDto;
+import dev.hspl.hspl2shop.shop.model.read.dto.*;
 import dev.hspl.hspl2shop.shop.model.read.repository.CategoryQueryRepository;
+import dev.hspl.hspl2shop.shop.model.read.repository.DeliveryMethodQueryRepository;
 import dev.hspl.hspl2shop.shop.model.read.repository.ProductQueryRepository;
 import dev.hspl.hspl2shop.shop.value.HumanReadableId;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +24,7 @@ import java.util.List;
 public class ShopQueryService {
     private final CategoryQueryRepository categoryQueryRepository;
     private final ProductQueryRepository productQueryRepository;
+    private final DeliveryMethodQueryRepository deliveryMethodQueryRepository;
 
     public List<ShopCategoryDto> fetchAllCategories() {
         return categoryQueryRepository.queryAllShop();
@@ -55,5 +53,9 @@ public class ShopQueryService {
 
     public List<ShopVariantDto> fetchProductVariants(HumanReadableId productId) {
         return productQueryRepository.queryProductVariants(productId);
+    }
+
+    public List<ShopDeliveryMethodDto> fetchAllDeliveryMethods() {
+        return deliveryMethodQueryRepository.queryAllShop();
     }
 }

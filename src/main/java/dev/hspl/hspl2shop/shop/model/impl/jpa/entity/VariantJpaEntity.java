@@ -23,12 +23,13 @@ public class VariantJpaEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("productId")
+    @JoinColumn(name = "product_id")
     private ProductJpaEntity product;
 
-//    @Column(name = "product_name")
-//    private String productName; // denormalizes from products table for better performance
+    @Column(name = "product_name")
+    private String productName; // denormalizes from products table for better performance
 
-    @Column(name = "name")
+    @Column(name = "variant_name")
     private String variantName;
 
     @Column(name = "stock")
@@ -40,6 +41,9 @@ public class VariantJpaEntity {
     @Column(name = "discount")
     @Nullable
     private Short discountPercent; // 0-100
+
+    @Column(name = "weight")
+    private int weight; // unit: g - 1000g
 
     @Column(name = "visible")
     private boolean visible;

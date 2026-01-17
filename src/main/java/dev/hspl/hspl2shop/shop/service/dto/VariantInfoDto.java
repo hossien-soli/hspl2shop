@@ -17,6 +17,9 @@ public record VariantInfoDto(
         Integer variantPrice,
 
         @Nullable
-        Short discountPercent
+        Short discountPercent,
+
+        @NotNull(message = "admin.product.variant.weight.required")
+        Integer variantWeight
 ) {
 }

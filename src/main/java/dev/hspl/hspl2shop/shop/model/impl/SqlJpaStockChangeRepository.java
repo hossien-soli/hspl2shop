@@ -13,6 +13,7 @@ import org.jspecify.annotations.NullMarked;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,8 +48,7 @@ public class SqlJpaStockChangeRepository implements StockChangeRepository {
                     .variantIndex(change.getVariantIndex())
                     .build();
 
-            // TODO: it may should be saveAndFlush instead of just save
-            jpaRepository.save(StockChangeJpaEntity.builder()
+            jpaRepository.saveAndFlush(StockChangeJpaEntity.builder()
                     .id(change.getId())
                     .relatedUserId(change.getRelatedUserId())
                     .variant(variantJpaRepository.getReferenceById(variantId))
@@ -62,5 +62,11 @@ public class SqlJpaStockChangeRepository implements StockChangeRepository {
         } catch (OptimisticLockingFailureException exception) {
             throw new EntityVersionMismatchException(StockChange.class.getSimpleName(), change.getId().toString());
         }
+    }
+
+    @Override
+    public void saveAll(List<StockChange> changes) throws EntityVersionMismatchException {
+        changes.forEach(this::save);
+        // this can be optimized using jdbc batching and reducing system calls
     }
 }

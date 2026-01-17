@@ -138,7 +138,7 @@ public class ProductManagementAdminService {
         }
 
         product.addNewVariant(info.variantIndex(), variantName, info.variantPrice(),
-                info.discountPercent(), LocalDateTime.now());
+                info.discountPercent(), info.variantWeight(), LocalDateTime.now());
 
         productRepository.save(product);
     }
@@ -162,7 +162,7 @@ public class ProductManagementAdminService {
         }
 
         product.editVariant(info.variantIndex(), variantName, info.variantPrice(),
-                info.discountPercent(), LocalDateTime.now());
+                info.discountPercent(), info.variantWeight(), LocalDateTime.now());
 
         productRepository.save(product);
     }
